@@ -25,10 +25,9 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState(null);
-  const [itemTitle, setItemTitle] = useState([]);
+  const [itemTitle, setItemTitle] = useState("");
 
   const addToCart = (item) => {
-    console.log("item", item);
     setItemTitle(item.title);
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);

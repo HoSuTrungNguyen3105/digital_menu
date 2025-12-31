@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "../../context/CartContext";
 
 // --- MOCK DATA GENERATOR ---
 const NAMES = [
@@ -85,6 +86,7 @@ const RestaurantMenu = () => {
   const [showCartModal, setShowCartModal] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const { addToCart } = useCart();
 
   // Create 100 items once
   const allItems = useMemo(() => generateMockData(100), []);
@@ -98,6 +100,7 @@ const RestaurantMenu = () => {
   const getItemQty = (id) => cart[id] || 0;
 
   const handleUpdateCart = (id, delta) => {
+    addToCart(delta);
     setCart((prev) => {
       const newQty = (prev[id] || 0) + delta;
       if (newQty <= 0) {
@@ -374,7 +377,7 @@ const RestaurantMenu = () => {
                         {item.qty}
                       </span>
                       <button
-                        onClick={() => handleUpdateCart(item.id, 1)}
+                        onClick={() => handleUpdateCart(item, 1)}
                         className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm border border-gray-200"
                       >
                         <Plus className="w-4 h-4" />
@@ -450,17 +453,17 @@ const RestaurantMenu = () => {
                 setOrderSuccess(false);
                 setShowCartModal(false);
               }}
-              className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition"
+              className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition mb-2"
             >
               Đặt Thêm Món
             </button>
             <button
               onClick={() => {
-                navigate("booking");
+                navigate("/Payment");
               }}
               className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition"
             >
-              THanh toans
+              Thanh toán
             </button>
           </motion.div>
         )}

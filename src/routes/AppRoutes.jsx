@@ -15,10 +15,13 @@ import RestaurantRedirect from "./RestaurantRedirect";
 import CheckinTable from "../pages/CheckinTable";
 import FoodMenu from "../pages/Menu/FoodMenu";
 import RestaurantMenu from "../pages/Menu/RestaurantMenu";
+import Payment from "../pages/Payment/Payment";
+// import CartSidebar from "../context/CartSidebarContext";
 
 export default function App() {
   return (
     <BrowserRouter>
+      {/* <CartSidebar /> */}
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<Home />} />
@@ -110,6 +113,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <RestaurantMenu />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/Payment"
+          element={
+            <ProtectedRoute>
+              <Payment />
             </ProtectedRoute>
           }
         />
