@@ -1,0 +1,115 @@
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Download } from "lucide-react";
+import jsPDF from "jspdf";
+import { getRestaurantQR } from "../api/restaurant.api";
+
+export default function RestaurantCard({ restaurant }) {
+  if (!restaurant) return null;
+
+  const navigate = useNavigate();
+  const [qr, setQr] = useState("");
+  const [loadingQR, setLoadingQR] = useState(true);
+  const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (!restaurant?._id || fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    async function fetchQR() {
+      try {
+        const res = await getRestaurantQR(restaurant._id);
+        setQr(res?.data?.data?.qrCode || "");
+      } catch (err) {
+        console.error("QR fetch failed", err);
+      } finally {
+        setLoadingQR(false);
+      }
+    }
+
+    fetchQR();
+  }, [restaurant?._id]);
+
+  /* =========================
+     DOWNLOAD QR AS PDF
+  ========================= */
+  const downloadQRAsPDF = () => {
+    if (!qr) return;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    pdf.setFontSize(18);
+    pdf.text(restaurant.name, 105, 20, { align: "center" });
+
+    pdf.setFontSize(11);
+    pdf.text("Scan to view digital menu", 105, 28, { align: "center" });
+
+    pdf.addImage(qr, "PNG", 55, 40, 100, 100);
+
+    pdf.setFontSize(10);
+    pdf.text(`Generated on: ${new Date().toLocaleString()}`, 105, 150, {
+      align: "center",
+    });
+
+    pdf.save(`${restaurant.name}-QR.pdf`);
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col justify-between">
+      {/* TOP */}
+      <div>
+        <h3 className="text-lg font-bold truncate">{restaurant.name}</h3>
+
+        <p className="text-sm text-gray-500 mt-1">
+          Status:{" "}
+          <span
+            className={restaurant.isActive ? "text-green-600" : "text-red-500"}
+          >
+            {restaurant.isActive ? "Active" : "Inactive"}
+          </span>
+        </p>
+
+        <div className="h-40 flex items-center justify-center mt-4 bg-gray-50 rounded-xl">
+          {loadingQR ? (
+            <p className="text-xs text-gray-400 animate-pulse">Loading QR...</p>
+          ) : (
+            qr && <img src={qr} alt="QR" className="w-32 h-32 object-contain" />
+          )}
+        </div>
+      </div>
+
+      {/* ACTIONS */}
+      {/* ACTIONS */}
+      <div className="mt-6 flex flex-col gap-3">
+        <div className="flex gap-3">
+          {/* ✅ FIXED ROUTE */}
+          <button
+            onClick={() =>
+              navigate(`/manage/restaurant/${restaurant._id}/menus`)
+            }
+            className="flex-1 border border-gray-200 bg-gray-50 text-gray-700 rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-100 transition-colors"
+          >
+            Manage Menus
+          </button>
+
+          <button
+            onClick={() => navigate(`/menu/${restaurant._id}`)}
+            className="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl py-2.5 text-sm font-semibold shadow-md shadow-orange-500/20 hover:scale-[1.02] transition-transform"
+          >
+            View Menu
+          </button>
+        </div>
+
+        {qr && (
+          <button
+            onClick={downloadQRAsPDF}
+            className="w-full flex items-center justify-center gap-2 border border-orange-200 text-orange-700 bg-orange-50 rounded-xl py-2.5 text-sm font-semibold hover:bg-orange-100 transition-colors"
+          >
+            <Download size={16} />
+            Download QR Code (PDF)
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
