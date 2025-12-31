@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { FaTimes, FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "./CartContext";
+import { useCart } from "../context/CartContext";
 
 export default function CartSidebar() {
   const {
@@ -13,7 +13,7 @@ export default function CartSidebar() {
     itemTitle,
   } = useCart();
 
-  const sidebarRef = useRef < HTMLDivElement > null;
+  const sidebarRef = useRef(null);
   const navigate = useNavigate();
 
   // Close sidebar when clicking outside
@@ -169,9 +169,7 @@ export default function CartSidebar() {
 
               <button
                 className="w-full bg-teal-600 hover:bg-teal-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2"
-                onClick={() =>
-                  navigate(`/booking/${total.toFixed(2)}/${itemTitle}`)
-                }
+                onClick={() => navigate(`/Payment`)}
               >
                 Place Order
               </button>

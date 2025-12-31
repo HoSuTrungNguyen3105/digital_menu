@@ -81,12 +81,19 @@ const generateMockData = (count = 100) => {
 
 const RestaurantMenu = () => {
   const navigate = useNavigate();
+  const { cartItems, addToCart, updateQuantity, clearCart } = useCart();
   const [activeCategory, setActiveCategory] = useState("Tất cả");
-  const [cart, setCart] = useState({}); // { itemId: quantity }
   const [showCartModal, setShowCartModal] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
-  const { addToCart } = useCart();
+
+  // Derived state from Context
+  const cart = useMemo(() => {
+    return cartItems.reduce((acc, item) => {
+      acc[item.id] = item.quantity;
+      return acc;
+    }, {});
+  }, [cartItems]);
 
   // Create 100 items once
   const allItems = useMemo(() => generateMockData(100), []);
@@ -99,28 +106,23 @@ const RestaurantMenu = () => {
   // --- CART UTILS ---
   const getItemQty = (id) => cart[id] || 0;
 
-  const handleUpdateCart = (id, delta) => {
-    addToCart(delta);
-    setCart((prev) => {
-      const newQty = (prev[id] || 0) + delta;
-      if (newQty <= 0) {
-        const { [id]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [id]: newQty };
-    });
+  const handleUpdateCart = (item, delta) => {
+    const currentQty = getItemQty(item.id);
+    if (currentQty === 0 && delta > 0) {
+      addToCart(item);
+    } else {
+      updateQuantity(item.id, delta);
+    }
   };
 
-  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const totalPrice = Object.entries(cart).reduce((total, [id, qty]) => {
-    const item = allItems.find((i) => i.id === parseInt(id));
-    return total + (item ? item.price * qty : 0);
-  }, 0);
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
-  const cartItemsDetail = Object.entries(cart).map(([id, qty]) => {
-    return { ...allItems.find((i) => i.id === parseInt(id)), qty };
-  });
+  const cartItemsDetail = cartItems;
 
   const handleOrder = () => {
     setIsOrdering(true);
@@ -128,7 +130,7 @@ const RestaurantMenu = () => {
     setTimeout(() => {
       setIsOrdering(false);
       setOrderSuccess(true);
-      setCart({});
+      placeOrder();
     }, 2000);
   };
 
@@ -255,7 +257,7 @@ const RestaurantMenu = () => {
                     <div className="flex justify-end mt-2">
                       {qty === 0 ? (
                         <button
-                          onClick={() => handleUpdateCart(item.id, 1)}
+                          onClick={() => handleUpdateCart(item, 1)}
                           className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors"
                         >
                           <Plus className="w-5 h-5" />
@@ -263,7 +265,7 @@ const RestaurantMenu = () => {
                       ) : (
                         <div className="flex items-center bg-orange-50 rounded-full">
                           <button
-                            onClick={() => handleUpdateCart(item.id, -1)}
+                            onClick={() => handleUpdateCart(item, -1)}
                             className="w-8 h-8 rounded-full flex items-center justify-center text-orange-600 hover:bg-orange-200"
                           >
                             <Minus className="w-4 h-4" />
@@ -272,7 +274,7 @@ const RestaurantMenu = () => {
                             {qty}
                           </span>
                           <button
-                            onClick={() => handleUpdateCart(item.id, 1)}
+                            onClick={() => handleUpdateCart(item, 1)}
                             className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 shadow-md shadow-orange-500/30"
                           >
                             <Plus className="w-4 h-4" />
@@ -368,7 +370,7 @@ const RestaurantMenu = () => {
                     </div>
                     <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 h-fit">
                       <button
-                        onClick={() => handleUpdateCart(item.id, -1)}
+                        onClick={() => handleUpdateCart(item, -1)}
                         className="w-8 h-8 flex items-center justify-center bg-white rounded-md shadow-sm border border-gray-200"
                       >
                         <Minus className="w-4 h-4" />

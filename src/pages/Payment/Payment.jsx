@@ -1,11 +1,34 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCallback, useRef, useState } from "react";
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import MomoImg from "../../img/MOMO-Logo-App.png";
+import { useCart } from "../../context/CartContext";
+import { useReactToPrint } from "react-to-print";
 
 const Payment = () => {
-  const { total } = useParams();
   const navigate = useNavigate();
+  const contentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    copyShadowRoots,
+    documentTitle,
+    fonts,
+    ignoreGlobalStyles,
+    nonce,
+    onAfterPrint,
+    onBeforePrint,
+    onPrintError,
+    pageStyle,
+  });
+  const { cartTotal, orders, clearCart, clearOrders } = useCart();
+
+  // Calculate total bill (cart + placed orders)
+  const ordersTotal = orders.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const finalTotal = cartTotal + ordersTotal;
+
   const [paymentMethod, setPaymentMethod] = useState("momo");
   const [paymentForm, setPaymentForm] = useState("cash");
 
@@ -16,11 +39,12 @@ const Payment = () => {
   // Mock payment handler
   const handlePayment = () => {
     setIsProcessing(true);
-    navigate("success");
     // Simulate API call
     setTimeout(() => {
       setIsProcessing(false);
       setIsSuccess(true);
+      clearCart();
+      clearOrders();
     }, 2000);
   };
 
@@ -80,7 +104,7 @@ const Payment = () => {
               <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
                 <span className="text-gray-600">Total Amount</span>
                 <span className="text-3xl font-bold text-teal-600">
-                  ${total}
+                  ${finalTotal.toLocaleString("vi-VN")}
                 </span>
               </div>
             </div>
@@ -154,6 +178,13 @@ const Payment = () => {
                 </div>
               </div>
             )}
+
+            <button onClick={reactToPrintFn}>Print</button>
+            <div ref={contentRef}>Content to print</div>
+
+            {onBeforePrint && <p>Printing...</p>}
+
+            {onAfterPrint && <p>Printed successfully</p>}
 
             {/* <button
               onClick={handlePayment}

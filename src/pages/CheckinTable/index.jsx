@@ -1,66 +1,7 @@
-// import { Scanner } from '@yudiel/react-qr-scanner';
-// import { useCallback, useState } from 'react';
-
-// const CheckinTable = () => {
-//     const [isProcessing, setIsProcessing] = useState(false);
-//     const [lastResult, setLastResult] = useState(null);
-
-//     const handleScan = useCallback((result) => {
-//         if (!result.length || isProcessing) return;
-
-//         const data = result[0].rawValue;
-
-//         // Prevent duplicate processing of the same scan
-//         if (data === lastResult) return;
-
-//         setIsProcessing(true);
-//         setLastResult(data);
-
-//         // Simulate API Check-in
-//         setTimeout(() => {
-//             setIsProcessing(false);
-//             // Clear result after 3 seconds to allow re-scanning same ticket if needed
-//             setTimeout(() => setLastResult(null), 3000);
-//         }, 1000);
-//     }, [isProcessing, lastResult]);
-
-//     return (
-//         <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
-//             <h2>Check-in Scanner</h2>
-
-//             <div style={{ borderRadius: '8px', overflow: 'hidden', position: 'relative' }}>
-//                 <Scanner
-//                     onScan={handleScan}
-//                     onError={(error) => console.error(`Scanner Error: ${error?.message}`)}
-//                     constraints={{ facingMode: 'environment' }}
-//                 />
-
-//                 {isProcessing && (
-//                     <div style={{
-//                         position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-//                         backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',
-//                         alignItems: 'center', justifyContent: 'center', color: 'white'
-//                     }}>
-//                         Processing...
-//                     </div>
-//                 )}
-//             </div>
-
-//             {lastResult && (
-//                 <p style={{ marginTop: '1rem', color: 'green' }}>
-//                     Successfully scanned: {lastResult}
-//                 </p>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default CheckinTable;
-
-import { Scanner } from "@yudiel/react-qr-scanner";
-import React, { useCallback, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, ScanLine } from "lucide-react";
+import { Scanner } from "@yudiel/react-qr-scanner";
 
 const CheckinTable = () => {
   const [isProcessing, setIsProcessing] = useState(false);

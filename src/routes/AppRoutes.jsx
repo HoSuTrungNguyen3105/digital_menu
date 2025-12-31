@@ -16,12 +16,12 @@ import CheckinTable from "../pages/CheckinTable";
 import FoodMenu from "../pages/Menu/FoodMenu";
 import RestaurantMenu from "../pages/Menu/RestaurantMenu";
 import Payment from "../pages/Payment/Payment";
-// import CartSidebar from "../context/CartSidebarContext";
+import CartSidebar from "../components/CartSidebar";
 
 export default function App() {
   return (
     <BrowserRouter>
-      {/* <CartSidebar /> */}
+      <CartSidebar />
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<Home />} />

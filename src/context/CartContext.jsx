@@ -22,13 +22,23 @@ import { createContext, useContext, useState, ReactNode } from "react";
 const CartContext = createContext(undefined);
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const menuCartData = [
+    {
+      title: [],
+      name: [],
+      price: [],
+      quantity: [],
+      id: [],
+    },
+  ];
+  const [cartItems, setCartItems] = useState(menuCartData);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState(null);
   const [itemTitle, setItemTitle] = useState("");
+  const [orders, setOrders] = useState([]);
 
   const addToCart = (item) => {
-    setItemTitle(item.title);
+    setItemTitle(item.title || item.name);
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
@@ -38,11 +48,16 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...item, quantity: 1 }];
     });
+
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+
     //setIsSidebarOpen(true); // Open sidebar when adding item
   };
 
   const removeFromCart = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
+
+    localStorage.setItem("cart", JSON.stringify(cartItems));
   };
 
   const updateQuantity = (id, delta) => {
@@ -57,9 +72,18 @@ export function CartProvider({ children }) {
         })
         .filter((item) => item.quantity > 0)
     );
+
+    localStorage.setItem("cart", JSON.stringify(cartItems));
   };
 
   const clearCart = () => setCartItems([]);
+
+  const placeOrder = () => {
+    setOrders((prev) => [...prev, ...cartItems]);
+    setCartItems([]);
+  };
+
+  const clearOrders = () => setOrders([]);
 
   const cartTotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -86,6 +110,9 @@ export function CartProvider({ children }) {
         toggleSidebar,
         selectedTableId,
         selectTable,
+        orders,
+        placeOrder,
+        clearOrders,
       }}
     >
       {children}

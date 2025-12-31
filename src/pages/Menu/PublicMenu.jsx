@@ -4,10 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Search,
-  Filter,
   ShoppingBag,
   MapPin,
-  UtensilsCrossed,
   Flame,
   Star,
   Tag,
@@ -102,6 +100,13 @@ export default function PublicMenu() {
       discount: Math.random() > 0.8 ? "Giảm 20%" : null,
     }));
   };
+
+  const filterItemss = FILTERS.map((e) => {
+    {
+      label: e.label;
+      value: e.id;
+    }
+  });
 
   const filteredItems = getFilteredItems();
 
