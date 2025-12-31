@@ -307,7 +307,7 @@ const RestaurantMenu = () => {
                     {totalPrice.toLocaleString("vi-VN")}đ
                   </span>
                   <span className="text-xs font-bold text-orange-600">
-                    Xem chi tiết ↗
+                    Xem chi tiết
                   </span>
                 </div>
               </div>
@@ -453,6 +453,14 @@ const RestaurantMenu = () => {
               className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition"
             >
               Đặt Thêm Món
+            </button>
+            <button
+              onClick={() => {
+                navigate("booking");
+              }}
+              className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition"
+            >
+              THanh toans
             </button>
           </motion.div>
         )}
