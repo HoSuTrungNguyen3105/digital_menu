@@ -13,6 +13,8 @@ import CreateMenu from "../pages/Menu/CreateMenu";
 import ShowMenus from "../pages/Menu/ShowMenus";
 import ManageMenuItems from "../pages/Menu/ManageMenuItems";
 import AddMenuItem from "../pages/Menu/AddMenuItem";
+import RestaurantManage from "../pages/Dashboard/Manage/RestaurantManage";
+import TableManage from "../pages/Dashboard/Manage/TableManage";
 import RestaurantRedirect from "./RestaurantRedirect";
 import CheckinTable from "../pages/CheckinTable";
 import FoodMenu from "../pages/Menu/FoodMenu";
@@ -47,10 +49,10 @@ export default function App() {
         >
           <Route path="/dashboard" element={<DashboardOverview />} />
           <Route
-            path="/dashboard/restaurants"
-            element={<DashboardOverview />}
-          />{" "}
-          {/* Reusing overview for now */}
+            path="/dashboard/manage/restaurants"
+            element={<RestaurantManage />}
+          />
+          <Route path="/dashboard/manage/tables" element={<TableManage />} />
           <Route path="/create-restaurant" element={<CreateRestaurant />} />
           <Route
             path="/manage/restaurant/:restaurantId/menus"

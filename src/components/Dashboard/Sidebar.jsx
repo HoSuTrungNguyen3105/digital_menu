@@ -5,6 +5,7 @@ import {
   UtensilsCrossed,
   LogOut,
   PlusCircle,
+  QrCode,
 } from "lucide-react";
 
 export default function Sidebar({ onLogout }) {
@@ -18,7 +19,12 @@ export default function Sidebar({ onLogout }) {
 
   const navItems = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
-    { icon: Store, label: "Restaurants", path: "/dashboard/restaurants" },
+    {
+      icon: Store,
+      label: "Manage Restaurants",
+      path: "/dashboard/manage/restaurants",
+    },
+    { icon: QrCode, label: "Manage Tables", path: "/dashboard/manage/tables" },
     {
       icon: UtensilsCrossed,
       label: "Create Restaurant",
