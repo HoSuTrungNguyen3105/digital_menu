@@ -14,6 +14,7 @@ import AddMenuItem from "../pages/Menu/AddMenuItem";
 import RestaurantRedirect from "./RestaurantRedirect";
 import CheckinTable from "../pages/CheckinTable";
 import FoodMenu from "../pages/Menu/FoodMenu";
+import RestaurantMenu from "../pages/Menu/RestaurantMenu";
 
 export default function App() {
   return (
@@ -100,6 +101,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <FoodMenu />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/RestaurantMenu"
+          element={
+            <ProtectedRoute>
+              <RestaurantMenu />
             </ProtectedRoute>
           }
         />
