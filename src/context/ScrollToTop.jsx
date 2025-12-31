@@ -1,0 +1,42 @@
+import { useState, useEffect } from "react";
+import { FaArrowUp } from "react-icons/fa";
+
+export default function ScrollToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Toggle visibility based on scroll position
+  const toggleVisibility = () => {
+    if (window.scrollY > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  };
+
+  // Scroll to top smoothly
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 bg-teal-600 text-white rounded-full shadow-lg hover:bg-teal-700 transition-all duration-300 z-50 animate-bounce"
+          aria-label="Scroll to top"
+        >
+          <FaArrowUp className="text-xl" />
+        </button>
+      )}
+    </>
+  );
+}

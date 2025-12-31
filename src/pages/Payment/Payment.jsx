@@ -10,15 +10,15 @@ const Payment = () => {
   const contentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({
     contentRef,
-    copyShadowRoots,
-    documentTitle,
-    fonts,
-    ignoreGlobalStyles,
-    nonce,
-    onAfterPrint,
-    onBeforePrint,
-    onPrintError,
-    pageStyle,
+    // copyShadowRoots,
+    // documentTitle,
+    // fonts,
+    // ignoreGlobalStyles,
+    // nonce,
+    // onAfterPrint,
+    // onBeforePrint,
+    // onPrintError,
+    // pageStyle,
   });
   const { cartTotal, orders, clearCart, clearOrders } = useCart();
 
@@ -181,10 +181,10 @@ const Payment = () => {
 
             <button onClick={reactToPrintFn}>Print</button>
             <div ref={contentRef}>Content to print</div>
-
+            {/* 
             {onBeforePrint && <p>Printing...</p>}
 
-            {onAfterPrint && <p>Printed successfully</p>}
+            {onAfterPrint && <p>Printed successfully</p>} */}
 
             {/* <button
               onClick={handlePayment}

@@ -4,7 +4,9 @@ import Home from "../pages/Home";
 import PublicMenu from "../pages/Menu/PublicMenu";
 import OwnerRegister from "../pages/Owner";
 import OwnerLogin from "../pages/Login";
-import Dashboard from "../pages/Dashboard/Dashboard";
+// import Dashboard from "../pages/Dashboard/Dashboard"; // Removed old dashboard
+import DashboardOverview from "../pages/Dashboard/DashboardOverview";
+import DashboardLayout from "../layouts/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateRestaurant from "../pages/CreateRestaurant";
 import CreateMenu from "../pages/Menu/CreateMenu";
@@ -29,81 +31,46 @@ export default function App() {
         <Route path="/register" element={<OwnerRegister />} />
         <Route path="/login" element={<OwnerLogin />} />
 
-        <Route
-          path="/checkin/table"
-          element={
-            <ProtectedRoute>
-              <CheckinTable />
-            </ProtectedRoute>
-          }
-        />
-
         {/* REDIRECT */}
         <Route
           path="/restaurant/:restaurantId"
           element={<RestaurantRedirect />}
         />
 
-        {/* PROTECTED */}
+        {/* DASHBOARD & MANAGEMENT (WITH SIDEBAR) */}
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/dashboard" element={<DashboardOverview />} />
+          <Route
+            path="/dashboard/restaurants"
+            element={<DashboardOverview />}
+          />{" "}
+          {/* Reusing overview for now */}
+          <Route path="/create-restaurant" element={<CreateRestaurant />} />
+          <Route
+            path="/manage/restaurant/:restaurantId/menus"
+            element={<ShowMenus />}
+          />
+          <Route
+            path="/manage/restaurant/:restaurantId/menu/create"
+            element={<CreateMenu />}
+          />
+          <Route path="/menu/:menuId/items" element={<ManageMenuItems />} />
+          <Route path="/menu/:menuId/items/add" element={<AddMenuItem />} />
+          <Route path="/FoodMenu" element={<FoodMenu />} />
+        </Route>
 
+        {/* OTHER PROTECTED ROUTES (STANDALONE) */}
         <Route
-          path="/create-restaurant"
+          path="/checkin/table"
           element={
             <ProtectedRoute>
-              <CreateRestaurant />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/manage/restaurant/:restaurantId/menus"
-          element={
-            <ProtectedRoute>
-              <ShowMenus />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/manage/restaurant/:restaurantId/menu/create"
-          element={
-            <ProtectedRoute>
-              <CreateMenu />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/menu/:menuId/items"
-          element={
-            <ProtectedRoute>
-              <ManageMenuItems />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/menu/:menuId/items/add"
-          element={
-            <ProtectedRoute>
-              <AddMenuItem />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/FoodMenu"
-          element={
-            <ProtectedRoute>
-              <FoodMenu />
+              <CheckinTable />
             </ProtectedRoute>
           }
         />
