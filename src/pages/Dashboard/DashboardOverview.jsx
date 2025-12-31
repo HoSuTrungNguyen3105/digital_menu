@@ -1,5 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  TrendingUp,
+  Users,
+  DollarSign,
+  Package,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
 import { getMe } from "../../api/auth.api";
 import { getRestaurants } from "../../api/restaurant.api";
 import RestaurantCard from "../../components/RestaurantCard";
@@ -70,6 +78,77 @@ export default function DashboardOverview() {
           Here's what's happening with your restaurants today.
         </p>
       </header>
+
+      {/* STATS CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {[
+          {
+            label: "Total Revenue",
+            value: "24.5Mđ",
+            icon: DollarSign,
+            trend: "+12.5%",
+            positive: true,
+            color: "bg-blue-500",
+          },
+          {
+            label: "Active Orders",
+            value: "12",
+            icon: Package,
+            trend: "+4",
+            positive: true,
+            color: "bg-orange-500",
+          },
+          {
+            label: "Total Visitors",
+            value: "842",
+            icon: Users,
+            trend: "-2.4%",
+            positive: false,
+            color: "bg-green-500",
+          },
+          {
+            label: "Avg. Bill",
+            value: "185kđ",
+            icon: TrendingUp,
+            trend: "+5.2%",
+            positive: true,
+            color: "bg-red-500",
+          },
+        ].map((stat, i) => (
+          <div
+            key={i}
+            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 group hover:border-orange-200 transition-all"
+          >
+            <div
+              className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center shadow-lg shadow-gray-200`}
+            >
+              <stat.icon className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">
+                {stat.label}
+              </p>
+              <div className="flex items-end gap-2">
+                <h3 className="text-2xl font-black text-gray-900 leading-tight">
+                  {stat.value}
+                </h3>
+                <span
+                  className={`text-[10px] font-bold flex items-center mb-1 ${
+                    stat.positive ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {stat.positive ? (
+                    <ArrowUpRight className="w-3 h-3" />
+                  ) : (
+                    <ArrowDownRight className="w-3 h-3" />
+                  )}
+                  {stat.trend}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* STATS or QUICK ACTIONS */}
       {/* For now, just listing restaurants as before, but cleaner */}

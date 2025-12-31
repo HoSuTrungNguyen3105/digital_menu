@@ -15,6 +15,10 @@ import ManageMenuItems from "../pages/Menu/ManageMenuItems";
 import AddMenuItem from "../pages/Menu/AddMenuItem";
 import RestaurantManage from "../pages/Dashboard/Manage/RestaurantManage";
 import TableManage from "../pages/Dashboard/Manage/TableManage";
+import FoodManage from "../pages/Dashboard/Manage/FoodManage";
+import OrderManage from "../pages/Dashboard/Manage/OrderManage";
+import OrderHistory from "../pages/Dashboard/Manage/OrderHistory";
+import Settings from "../pages/Dashboard/Settings";
 import RestaurantRedirect from "./RestaurantRedirect";
 import CheckinTable from "../pages/CheckinTable";
 import FoodMenu from "../pages/Menu/FoodMenu";
@@ -53,6 +57,10 @@ export default function App() {
             element={<RestaurantManage />}
           />
           <Route path="/dashboard/manage/tables" element={<TableManage />} />
+          <Route path="/dashboard/manage/food" element={<FoodManage />} />
+          <Route path="/dashboard/manage/orders" element={<OrderManage />} />
+          <Route path="/dashboard/manage/history" element={<OrderHistory />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
           <Route path="/create-restaurant" element={<CreateRestaurant />} />
           <Route
             path="/manage/restaurant/:restaurantId/menus"

@@ -6,6 +6,10 @@ import {
   LogOut,
   PlusCircle,
   QrCode,
+  Pizza,
+  ClipboardList,
+  History,
+  Settings,
 } from "lucide-react";
 
 export default function Sidebar({ onLogout }) {
@@ -25,6 +29,18 @@ export default function Sidebar({ onLogout }) {
       path: "/dashboard/manage/restaurants",
     },
     { icon: QrCode, label: "Manage Tables", path: "/dashboard/manage/tables" },
+    { icon: Pizza, label: "Manage Food", path: "/dashboard/manage/food" },
+    {
+      icon: ClipboardList,
+      label: "Live Orders",
+      path: "/dashboard/manage/orders",
+    },
+    {
+      icon: History,
+      label: "Order History",
+      path: "/dashboard/manage/history",
+    },
+    { icon: Settings, label: "Settings", path: "/dashboard/settings" },
     {
       icon: UtensilsCrossed,
       label: "Create Restaurant",

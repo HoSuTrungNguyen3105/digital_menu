@@ -2,8 +2,32 @@ import React from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  type = "bottom",
+}) {
   if (!isOpen) return null;
+
+  const isBottom = type === "bottom";
+
+  const variants = isBottom
+    ? {
+        initial: { y: "100%", opacity: 1 },
+        animate: { y: "0%", opacity: 1 },
+        exit: { y: "100%", opacity: 1 },
+      }
+    : {
+        initial: { scale: 0.9, opacity: 0, y: "0%", x: "0%" },
+        animate: { scale: 1, opacity: 1, y: "0%", x: "0%" },
+        exit: { scale: 0.9, opacity: 0, y: "0%", x: "0%" },
+      };
+
+  const modalClasses = isBottom
+    ? "fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[90vh]"
+    : "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-lg bg-white rounded-3xl max-h-[85vh]";
 
   return (
     <AnimatePresence>
@@ -20,11 +44,15 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
           {/* Modal Content */}
           <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[70] bg-white rounded-t-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
+            initial={variants.initial}
+            animate={variants.animate}
+            exit={variants.exit}
+            transition={
+              isBottom
+                ? { type: "spring", damping: 25, stiffness: 300 }
+                : { duration: 0.2 }
+            }
+            className={`${modalClasses} z-[70] flex flex-col shadow-2xl overflow-hidden`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">

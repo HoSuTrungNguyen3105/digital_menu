@@ -69,6 +69,7 @@ export default function TableManage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTable, setSelectedTable] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const filteredTables = MOCK_TABLES.filter(
     (t) =>
@@ -79,6 +80,11 @@ export default function TableManage() {
   const handleViewQr = (table) => {
     setSelectedTable(table);
     setShowQrModal(true);
+  };
+
+  const handleViewDetail = (table) => {
+    setSelectedTable(table);
+    setShowDetailModal(true);
   };
 
   return (
@@ -124,7 +130,7 @@ export default function TableManage() {
         {filteredTables.map((table) => (
           <div
             key={table.id}
-            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-orange-200 transition-all group relative"
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-orange-200 transition-all group relative cursor-pointer"
           >
             <div className="flex justify-between items-start mb-4">
               <div
@@ -159,13 +165,23 @@ export default function TableManage() {
 
             <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-50">
               <button
-                onClick={() => handleViewQr(table)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewQr(table);
+                }}
                 className="flex items-center justify-center gap-2 py-2 rounded-lg bg-orange-50 text-orange-600 text-xs font-bold hover:bg-orange-100 transition-colors"
               >
                 <QrCode className="w-4 h-4" />
                 View QR
               </button>
-              <button className="flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-bold hover:bg-gray-100 transition-colors">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Edit logic
+                  handleViewDetail(table);
+                }}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-bold hover:bg-gray-100 transition-colors"
+              >
                 <Edit2 className="w-4 h-4" />
                 Edit
               </button>
@@ -174,11 +190,120 @@ export default function TableManage() {
         ))}
       </div>
 
+      {/* DETAIL MODAL */}
+      <Modal
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        title="Table Details"
+        type="center"
+      >
+        {selectedTable && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+              <div
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm ${
+                  selectedTable.status === "Occupied"
+                    ? "bg-red-100 text-red-600"
+                    : "bg-green-100 text-green-600"
+                }`}
+              >
+                <Grid className="w-8 h-8" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {selectedTable.name}
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  {selectedTable.restaurant}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-white border border-gray-100 rounded-2xl">
+                <span className="text-xs text-gray-400 block mb-1 uppercase font-bold tracking-wider">
+                  Status
+                </span>
+                <span
+                  className={`text-sm font-bold ${
+                    selectedTable.status === "Occupied"
+                      ? "text-red-600"
+                      : "text-green-600"
+                  }`}
+                >
+                  {selectedTable.status}
+                </span>
+              </div>
+              <div className="p-4 bg-white border border-gray-100 rounded-2xl">
+                <span className="text-xs text-gray-400 block mb-1 uppercase font-bold tracking-wider">
+                  Capacity
+                </span>
+                <span className="text-sm font-bold text-gray-900">
+                  {selectedTable.capacity} People
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4 text-orange-500" />
+                Current Session
+              </h4>
+              <div className="p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                {selectedTable.status === "Occupied" ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Check-in time</span>
+                      <span className="font-bold text-gray-900">12:30 PM</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Total items ordered</span>
+                      <span className="font-bold text-gray-900 text-orange-600">
+                        4 Items
+                      </span>
+                    </div>
+                    <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
+                      <span className="text-gray-900 font-bold">
+                        Total Amount
+                      </span>
+                      <span className="text-lg font-black text-orange-600">
+                        850.000đ
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-sm text-center py-2">
+                    No active session for this table.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDetailModal(false);
+                  handleViewQr(selectedTable);
+                }}
+                className="flex-1 py-3 px-4 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+              >
+                <QrCode className="w-4 h-4" />
+                Manage QR
+              </button>
+              <button className="flex-1 py-3 px-4 bg-orange-600 text-white rounded-xl font-bold text-sm hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20">
+                Edit Table
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
       {/* QR MODAL */}
       <Modal
         isOpen={showQrModal}
         onClose={() => setShowQrModal(false)}
         title="Table QR Code"
+        type="center"
       >
         {selectedTable && (
           <div className="flex flex-col items-center py-6">
@@ -221,5 +346,3 @@ export default function TableManage() {
     </div>
   );
 }
-
-import { ExternalLink } from "lucide-react";
