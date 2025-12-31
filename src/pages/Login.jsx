@@ -23,12 +23,17 @@ export default function OwnerLogin() {
     setLoading(true);
 
     try {
-      await loginOwner({
+      const res = await loginOwner({
         email: data.email,
         password: data.password,
       });
 
-      // ✅ only after successful login
+      const { data } = res;
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // only after successful login
       navigate("/dashboard");
     } catch (err) {
       const message = err?.response?.data?.message;

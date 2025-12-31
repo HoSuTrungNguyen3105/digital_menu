@@ -1,35 +1,16 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-
-// export interface CartItem extends MenuItem {
-//   quantity: number;
-// }
-
-// interface CartContextType {
-//   cartItems: CartItem[];
-//   addToCart: (item: MenuItem) => void;
-//   removeFromCart: (id: number) => void;
-//   updateQuantity: (id: number, delta: number) => void;
-//   clearCart: () => void;
-//   itemTitle: string;
-//   cartTotal: number;
-//   itemCount: number;
-//   isSidebarOpen: boolean;
-//   toggleSidebar: () => void;
-//   selectedTableId: number | null;
-//   selectTable: (id: number | null) => void;
-// }
+import { createContext, useContext, useState } from "react";
 
 const CartContext = createContext(undefined);
 
 export function CartProvider({ children }) {
   const menuCartData = [
-    {
-      title: [],
-      name: [],
-      price: [],
-      quantity: [],
-      id: [],
-    },
+    // {
+    //   title: "",
+    //   name: "",
+    //   price: 0,
+    //   quantity: "",
+    //   id: "",
+    // },
   ];
   const [cartItems, setCartItems] = useState(menuCartData);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,9 +18,9 @@ export function CartProvider({ children }) {
   const [itemTitle, setItemTitle] = useState("");
   const [orders, setOrders] = useState([]);
 
-  const addToCart = (item) => {
+  const addToCart = async (item) => {
     setItemTitle(item.title || item.name);
-    setCartItems((prev) => {
+    await setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
@@ -83,7 +64,10 @@ export function CartProvider({ children }) {
     setCartItems([]);
   };
 
-  const clearOrders = () => setOrders([]);
+  const clearOrders = () => {
+    setOrders([]);
+    localStorage.clear("cart");
+  };
 
   const cartTotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
