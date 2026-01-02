@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "../../utils/axios";
 import { getMenu } from "../../api/menu.api";
 
 export default function ManageMenuItems() {
@@ -24,7 +23,9 @@ export default function ManageMenuItems() {
       }
     }
 
-    fetchItems();
+    if (menuId) {
+      fetchItems();
+    }
   }, [menuId]);
 
   if (loading) return <p className="p-6">Loading items...</p>;

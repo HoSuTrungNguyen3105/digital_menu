@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { createMenuItem } from "../../api/menuitem.api.js";
+import { createMenuItem } from "../../api/menuitem.api";
 
 export default function AddMenuItem() {
   const { menuId } = useParams();
@@ -16,14 +16,14 @@ export default function AddMenuItem() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -37,7 +37,7 @@ export default function AddMenuItem() {
       });
 
       navigate(`/menu/${menuId}/items`);
-    } catch (err) {
+    } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to add menu item");
     } finally {
       setLoading(false);

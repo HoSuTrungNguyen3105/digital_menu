@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { ScanLine, ArrowRight } from "lucide-react";
 import FAQItem from "./FAQ/FAQItem";
-import { FEATURES, STEPS, STATS, FAQS } from "../utils/mock.jsx";
+import { FEATURES, STEPS, STATS, FAQS } from "../utils/mock";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -256,7 +256,7 @@ export default function Home() {
 
 // --- SUB COMPONENTS ---
 
-function FeatureCard({ title, desc, icon, gradient, index }) {
+function FeatureCard({ title, desc, icon, gradient, index }: any) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

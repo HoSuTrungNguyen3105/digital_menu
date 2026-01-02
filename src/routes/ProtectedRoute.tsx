@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMe } from "../api/auth.api";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children }: any) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 

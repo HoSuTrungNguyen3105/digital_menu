@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, UtensilsCrossed } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginOwner } from "../api/auth.api.js";
+import { loginOwner } from "../api/auth.api";
 
 export default function OwnerLogin() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function OwnerLogin() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     setApiError("");
     setVerifyHint(false);
     setLoading(true);
@@ -28,14 +28,14 @@ export default function OwnerLogin() {
         password: data.password,
       });
 
-      const { data } = res;
+      const { data: userData } = res;
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", userData.token);
+      localStorage.setItem("user", JSON.stringify(userData.user));
 
       // only after successful login
       navigate("/dashboard");
-    } catch (err) {
+    } catch (err: any) {
       const message = err?.response?.data?.message;
 
       if (
@@ -85,7 +85,7 @@ export default function OwnerLogin() {
             </div>
             {errors.email && (
               <p className="text-xs text-red-500 mt-1">
-                {errors.email.message}
+                {(errors.email as any)?.message}
               </p>
             )}
           </div>
@@ -108,7 +108,7 @@ export default function OwnerLogin() {
             </div>
             {errors.password && (
               <p className="text-xs text-red-500 mt-1">
-                {errors.password.message}
+                {(errors.password as any)?.message}
               </p>
             )}
           </div>

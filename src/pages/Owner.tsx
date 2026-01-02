@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerOwner } from "../api/auth.api.js";
-import Button from "../components/Button.jsx";
+import { registerOwner } from "../api/auth.api";
+import Button from "../components/Button";
 
 export default function OwnerRegister() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function OwnerRegister() {
     formState: { errors, submitCount },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     setApiError("");
     setSuccess("");
     setLoading(true);
@@ -36,7 +36,7 @@ export default function OwnerRegister() {
 
       // Optional: redirect after few seconds
       setTimeout(() => navigate("/login"), 3000);
-    } catch (err) {
+    } catch (err: any) {
       setApiError(
         err?.response?.data?.message ||
           "Owner already exists or something went wrong"
@@ -82,9 +82,7 @@ export default function OwnerRegister() {
                 placeholder="Anil Kumar"
               />
             </div>
-            {errors.name && (
-              <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
-            )}
+              <p className="text-xs text-red-500 mt-1">{(errors.name as any)?.message}</p>
           </div>
 
           {/* Email */}
@@ -132,7 +130,7 @@ export default function OwnerRegister() {
             </p>
           )}
 
-          <Button loading={loading} />
+          <Button loading={loading} title="Create Account" />
 
           <button
             disabled={loading}

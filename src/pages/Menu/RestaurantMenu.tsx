@@ -10,6 +10,7 @@ import {
   X,
   Home,
   ChevronDown,
+  Clock, // Add Clock icon
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -94,7 +95,8 @@ const generateMockData = (count = 100) => {
 
 const RestaurantMenu = () => {
   const navigate = useNavigate();
-  const { cartItems, addToCart, updateQuantity, clearCart } = useCart();
+  const { cartItems, addToCart, updateQuantity, clearCart, placeOrder } =
+    useCart();
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const [showCartModal, setShowCartModal] = useState(false);
   const [isOrdering, setIsOrdering] = useState(false);
@@ -170,7 +172,7 @@ const RestaurantMenu = () => {
     setTimeout(() => {
       setIsOrdering(false);
       setOrderSuccess(true);
-      clearCart(); // Should probably clear cart after successful order
+      placeOrder(); // Call placeOrder instead of clearCart
     }, 2000);
   };
 
@@ -205,6 +207,14 @@ const RestaurantMenu = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          <button
+            onClick={() => navigate("/booking-history")}
+            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center gap-2"
+            title="Lịch sử đặt món"
+          >
+            <Clock className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Categories Tabs */}

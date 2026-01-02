@@ -26,16 +26,22 @@ import RestaurantMenu from "../pages/Menu/RestaurantMenu";
 import Payment from "../pages/Payment/Payment";
 import CartSidebar from "../components/CartSidebar";
 
+import HistoryItem from "../pages/Menu/HistoryItem";
+import HomePage from "../pages/Home/index";
+
 export default function App() {
   return (
     <BrowserRouter>
       <CartSidebar />
       <Routes>
         {/* PUBLIC */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/menu/:tableId" element={<PublicMenu />} />
         <Route path="/register" element={<OwnerRegister />} />
         <Route path="/login" element={<OwnerLogin />} />
+
+        {/* BOOKING HISTORY */}
+        <Route path="/booking-history" element={<HistoryItem />} />
 
         {/* REDIRECT */}
         <Route
@@ -72,8 +78,9 @@ export default function App() {
           />
           <Route path="/menu/:menuId/items" element={<ManageMenuItems />} />
           <Route path="/menu/:menuId/items/add" element={<AddMenuItem />} />
-          <Route path="/FoodMenu" element={<FoodMenu />} />
         </Route>
+
+        <Route path="/FoodMenu" element={<FoodMenu />} />
 
         {/* OTHER PROTECTED ROUTES (STANDALONE) */}
         <Route

@@ -4,7 +4,6 @@ import {
   Store,
   UtensilsCrossed,
   LogOut,
-  PlusCircle,
   QrCode,
   Pizza,
   ClipboardList,
