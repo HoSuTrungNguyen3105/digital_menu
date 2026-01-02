@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { FaTimes, FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart, CartItem } from "../context/CartContext";
 
 export default function CartSidebar() {
   const {
@@ -10,18 +10,17 @@ export default function CartSidebar() {
     cartItems,
     updateQuantity,
     cartTotal,
-    itemTitle,
   } = useCart();
 
-  const sidebarRef = useRef(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // Close sidebar when clicking outside
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: MouseEvent) {
       if (
         sidebarRef.current &&
-        !sidebarRef.current.contains(event.target) &&
+        !sidebarRef.current.contains(event.target as Node) &&
         isSidebarOpen
       ) {
         toggleSidebar();
@@ -96,7 +95,7 @@ export default function CartSidebar() {
                 </button>
               </div>
             ) : (
-              cartItems.map((item) => (
+              cartItems.map((item: CartItem) => (
                 <div
                   key={item.id}
                   className="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"

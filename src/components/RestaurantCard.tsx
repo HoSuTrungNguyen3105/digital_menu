@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 import jsPDF from "jspdf";
 import { getRestaurantQR } from "../api/restaurant.api";
 
-export default function RestaurantCard({ restaurant }) {
+export default function RestaurantCard({ restaurant }: any) {
   if (!restaurant) return null;
 
   const navigate = useNavigate();

@@ -8,7 +8,7 @@ export default function Modal({
   title,
   children,
   type = "bottom",
-}) {
+}: any) {
   if (!isOpen) return null;
 
   const isBottom = type === "bottom";

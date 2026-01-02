@@ -1,8 +1,36 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
-const CartContext = createContext<any>(undefined);
+export interface CartItem {
+  id: string;
+  title: string;
+  name?: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  [key: string]: any;
+}
 
-export function CartProvider({ children }: any) {
+export interface CartContextType {
+  cartItems: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, delta: number) => void;
+  clearCart: () => void;
+  itemTitle: string;
+  cartTotal: number;
+  itemCount: number;
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+  selectedTableId: string | null;
+  selectTable: (id: string) => void;
+  orders: any[];
+  placeOrder: () => void;
+  clearOrders: () => void;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export function CartProvider({ children }: { children: ReactNode }) {
   const menuCartData = [
     // {
     //   title: "",
@@ -12,22 +40,22 @@ export function CartProvider({ children }: any) {
     //   id: "",
     // },
   ];
-  const [cartItems, setCartItems] = useState(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedTableId, setSelectedTableId] = useState(null);
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
   const [itemTitle, setItemTitle] = useState("");
-  const [orders, setOrders] = useState(() => {
+  const [orders, setOrders] = useState<any[]>(() => {
     const savedOrders = localStorage.getItem("orderHistory");
     return savedOrders ? JSON.parse(savedOrders) : [];
   });
 
-  const addToCart = (item: any) => {
-    setItemTitle(item.title || item.name);
-    setCartItems((prev: any) => {
-      const existing = prev.find((i: any) => i.id === item.id);
+  const addToCart = (item: CartItem) => {
+    setItemTitle(item.title || item.name || "");
+    setCartItems((prev: CartItem[]) => {
+      const existing = prev.find((i: CartItem) => i.id === item.id);
       let newCart;
       if (existing) {
         newCart = prev.map((i: any) =>
@@ -99,10 +127,10 @@ export function CartProvider({ children }: any) {
     0
   );
 
-  const itemCount = cartItems.reduce((count: any, item: any) => count + item.quantity, 0);
+  const itemCount = cartItems.reduce((count: number, item: CartItem) => count + item.quantity, 0);
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
-  const selectTable = (id: any) => setSelectedTableId(id);
+  const toggleSidebar = () => setIsSidebarOpen((prev: boolean) => !prev);
+  const selectTable = (id: string) => setSelectedTableId(id);
 
   return (
     <CartContext.Provider
