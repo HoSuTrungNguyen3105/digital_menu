@@ -226,6 +226,7 @@ export interface Staff {
     email: string;
     name: string;
     role: Role;
+    password: string;
     pictureUrl: string;
     rank: Rank;
     department?: Department | null;

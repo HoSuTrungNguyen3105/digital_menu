@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { createMenuItem } from "../../api/menuitem.api";
+import { useCreateMenuItem } from "../../api/menuItem.hooks";
 
 export default function AddMenuItem() {
   const { menuId } = useParams();
@@ -13,8 +13,7 @@ export default function AddMenuItem() {
     category: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const createMutation = useCreateMenuItem();
 
   const handleChange = (e: any) => {
     setForm((prev) => ({
@@ -25,30 +24,34 @@ export default function AddMenuItem() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      await createMenuItem(menuId, {
-        name: form.name,
-        description: form.description,
-        price: Number(form.price),
-        category: form.category,
-      });
-
-      navigate(`/menu/${menuId}/items`);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to add menu item");
-    } finally {
-      setLoading(false);
-    }
+    
+    createMutation.mutate(
+      {
+        menuId: menuId!,
+        data: {
+          name: form.name,
+          description: form.description,
+          price: Number(form.price),
+          category: form.category,
+        },
+      },
+      {
+        onSuccess: () => {
+          navigate(`/menu/${menuId}/items`);
+        },
+      }
+    );
   };
 
   return (
     <div className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add Menu Item</h1>
 
-      {error && <p className="mb-4 text-red-500">{error}</p>}
+      {createMutation.error && (
+        <p className="mb-4 text-red-500">
+          {(createMutation.error as any)?.response?.data?.message || "Failed to add menu item"}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -92,10 +95,10 @@ export default function AddMenuItem() {
 
         <button
           type="submit"
-          disabled={loading}
-          className="bg-black text-white px-4 py-2 rounded w-full"
+          disabled={createMutation.isPending}
+          className={`bg-black text-white px-4 py-2 rounded w-full ${createMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
         >
-          {loading ? "Adding..." : "Add Item"}
+          {createMutation.isPending ? "Adding..." : "Add Item"}
         </button>
       </form>
     </div>

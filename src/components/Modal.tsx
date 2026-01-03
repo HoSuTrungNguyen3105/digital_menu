@@ -1,6 +1,14 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+  type?: "bottom" | "center";
+}
 
 export default function Modal({
   isOpen,
@@ -8,7 +16,7 @@ export default function Modal({
   title,
   children,
   type = "bottom",
-}: any) {
+}: ModalProps) {
   if (!isOpen) return null;
 
   const isBottom = type === "bottom";

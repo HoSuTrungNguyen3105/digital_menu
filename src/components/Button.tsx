@@ -1,6 +1,11 @@
 import React from "react";
 
-const Button = ({ loading, title }) => {
+interface ButtonProps {
+  loading: boolean;
+  title: string;
+}
+
+const Button: React.FC<ButtonProps> = ({ loading, title }) => {
   return (
     <button
       type="submit"

@@ -1,47 +1,18 @@
-import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMe, logoutOwner } from "../../api/auth.api";
-import { getRestaurants } from "../../api/restaurant.api";
+import { logoutOwner } from "../../api/auth.api";
+import { useGetMe } from "../../api/auth.hooks";
+import { useGetRestaurants } from "../../api/restaurant.hooks";
 import RestaurantCard from "../../components/RestaurantCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  const [owner, setOwner] = useState(null);
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // Use React Query hooks instead of manual fetching
+  const { data: owner, isLoading: ownerLoading, error: ownerError } = useGetMe();
+  const { data: restaurants = [], isLoading: restaurantsLoading, error: restaurantsError } = useGetRestaurants();
 
-  const dataPromise = [getMe(), getRestaurants()];
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      // const dataPromise = [getMe(), getRestaurants()]
-
-      const [meRes, restRes] = await Promise.all(dataPromise);
-
-      setOwner(meRes?.data?.data || null);
-
-      const list = restRes?.data?.data?.restaurant || [];
-      setRestaurants(Array.isArray(list) ? list.filter(Boolean) : []);
-    } catch (err) {
-      console.error("Dashboard error:", err);
-      if (err?.response?.status === 401) {
-        navigate("/login");
-      } else {
-        setError("Failed to load dashboard");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const loading = ownerLoading || restaurantsLoading;
+  const error = ownerError || restaurantsError;
 
   const handleLogout = async () => {
     try {
@@ -62,9 +33,15 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <button onClick={fetchData} className="underline">
-          Try again
-        </button>
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load dashboard</p>
+          <button 
+            onClick={() => navigate("/login")} 
+            className="underline text-blue-600"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     );
   }
@@ -75,7 +52,7 @@ export default function Dashboard() {
       <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 max-w-7xl mx-auto">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome, <span className="text-orange-600">{owner?.ownername}</span>
+            Welcome, <span className="text-orange-600">{owner?.name}</span>
           </h1>
           <p className="text-gray-500 mt-1">
             Manage your restaurants & QR menus

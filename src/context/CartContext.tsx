@@ -10,6 +10,14 @@ export interface CartItem {
   [key: string]: any;
 }
 
+export interface Order {
+  id: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: string;
+}
+
 export interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
@@ -23,7 +31,7 @@ export interface CartContextType {
   toggleSidebar: () => void;
   selectedTableId: string | null;
   selectTable: (id: string) => void;
-  orders: any[];
+  orders: Order[];
   placeOrder: () => void;
   clearOrders: () => void;
 }
@@ -31,15 +39,6 @@ export interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const menuCartData = [
-    // {
-    //   title: "",
-    //   name: "",
-    //   price: 0,
-    //   quantity: "",
-    //   id: "",
-    // },
-  ];
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -47,18 +46,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
   const [itemTitle, setItemTitle] = useState("");
-  const [orders, setOrders] = useState<any[]>(() => {
+  const [orders, setOrders] = useState<Order[]>(() => {
     const savedOrders = localStorage.getItem("orderHistory");
     return savedOrders ? JSON.parse(savedOrders) : [];
   });
 
   const addToCart = (item: CartItem) => {
     setItemTitle(item.title || item.name || "");
-    setCartItems((prev: CartItem[]) => {
-      const existing = prev.find((i: CartItem) => i.id === item.id);
-      let newCart;
+    setCartItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      let newCart: CartItem[];
       if (existing) {
-        newCart = prev.map((i: any) =>
+        newCart = prev.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
@@ -69,25 +68,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (id: any) => {
-    setCartItems((prev: any) => {
-      const newCart = prev.filter((item: any) => item.id !== id);
+  const removeFromCart = (id: string) => {
+    setCartItems((prev) => {
+      const newCart = prev.filter((item) => item.id !== id);
       localStorage.setItem("cart", JSON.stringify(newCart));
       return newCart;
     });
   };
 
-  const updateQuantity = (id: any, delta: any) => {
-    setCartItems((prev: any) => {
+  const updateQuantity = (id: string, delta: number) => {
+    setCartItems((prev) => {
       const newCart = prev
-        .map((item: any) => {
+        .map((item) => {
           if (item.id === id) {
             const newQuantity = Math.max(0, item.quantity + delta);
             return { ...item, quantity: newQuantity };
           }
           return item;
         })
-        .filter((item: any) => item.quantity > 0);
+        .filter((item) => item.quantity > 0);
       localStorage.setItem("cart", JSON.stringify(newCart));
       return newCart;
     });
@@ -101,7 +100,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const placeOrder = () => {
     if (cartItems.length === 0) return;
 
-    const newOrder = {
+    const newOrder: Order = {
       id: `ORD-${Date.now()}`,
       date: new Date().toLocaleString(),
       items: [...cartItems],
@@ -109,7 +108,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       status: "Processing",
     };
 
-    setOrders((prev: any) => {
+    setOrders((prev) => {
       const newOrders = [newOrder, ...prev];
       localStorage.setItem("orderHistory", JSON.stringify(newOrders));
       return newOrders;
@@ -123,13 +122,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const cartTotal = cartItems.reduce(
-    (total: any, item: any) => total + item.price * item.quantity,
+    (total, item) => total + item.price * item.quantity,
     0
   );
 
-  const itemCount = cartItems.reduce((count: number, item: CartItem) => count + item.quantity, 0);
+  const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
-  const toggleSidebar = () => setIsSidebarOpen((prev: boolean) => !prev);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const selectTable = (id: string) => setSelectedTableId(id);
 
   return (

@@ -1,47 +1,30 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import {
-  getMenuItemsByMenu,
-  deleteMenuItem,
-  toggleMenuItem,
-} from "../../api/menuitem.api";
+  useGetMenuItems,
+  useDeleteMenuItem,
+  useToggleMenuItem,
+} from "../../api/menuItem.hooks";
 
 export default function ManageMenuItems() {
   const { menuId } = useParams();
   const navigate = useNavigate();
 
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { data: items = [], isLoading, error } = useGetMenuItems(menuId!);
+  const deleteMutation = useDeleteMenuItem();
+  const toggleMutation = useToggleMenuItem();
 
-  const fetchItems = async () => {
-    try {
-      const res = await getMenuItemsByMenu(menuId);
-      setItems(res.data.data);
-    } catch {
-      setError("Failed to load menu items");
-    } finally {
-      setLoading(false);
-    }
+
+  const handleToggle = async (itemId: string) => {
+    toggleMutation.mutate(itemId);
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, [menuId]);
-
-  const handleToggle = async (itemId) => {
-    await toggleMenuItem(itemId);
-    fetchItems();
-  };
-
-  const handleDelete = async (itemId) => {
+  const handleDelete = async (itemId: string) => {
     if (!window.confirm("Delete this item?")) return;
-    await deleteMenuItem(itemId);
-    fetchItems();
+    deleteMutation.mutate(itemId);
   };
 
-  if (loading) return <p className="p-6">Loading items...</p>;
-  if (error) return <p className="p-6 text-red-500">{error}</p>;
+  if (isLoading) return <p className="p-6">Loading items...</p>;
+  if (error) return <p className="p-6 text-red-500">Failed to load menu items</p>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -60,7 +43,7 @@ export default function ManageMenuItems() {
         <p className="text-gray-500">No items added yet.</p>
       ) : (
         <div className="space-y-4">
-          {items.map((item) => (
+          {items.map((item: any) => (
             <div
               key={item._id}
               className="border rounded p-4 flex justify-between"
@@ -77,19 +60,21 @@ export default function ManageMenuItems() {
               <div className="flex flex-col gap-2">
                 <button
                   onClick={() => handleToggle(item._id)}
+                  disabled={toggleMutation.isPending}
                   className={`px-3 py-1 border rounded ${item.isAvailable
                       ? "text-green-600 border-green-600"
                       : "text-red-600 border-red-600"
-                    }`}
+                    } ${toggleMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {item.isAvailable ? "Available" : "Unavailable"}
+                  {toggleMutation.isPending ? "Updating..." : (item.isAvailable ? "Available" : "Unavailable")}
                 </button>
 
                 <button
                   onClick={() => handleDelete(item._id)}
-                  className="px-3 py-1 border rounded text-red-600 border-red-600"
+                  disabled={deleteMutation.isPending}
+                  className={`px-3 py-1 border rounded text-red-600 border-red-600 ${deleteMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  Delete
+                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
