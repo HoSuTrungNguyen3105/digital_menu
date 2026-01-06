@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, ScanLine } from "lucide-react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 
+interface DetectedCode {
+  rawValue: string;
+  [key: string]: unknown;
+}
+
 const CheckinTable = () => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [lastScanned, setLastScanned] = useState(null);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [lastScanned, setLastScanned] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleScan = useCallback(
-    (detectedCodes) => {
+    (detectedCodes: DetectedCode[] | null) => {
       if (!detectedCodes?.length || isProcessing) return;
 
       const tableId = detectedCodes[0].rawValue;
@@ -54,7 +59,7 @@ const CheckinTable = () => {
         <div className="relative overflow-hidden rounded-2xl border-4 border-orange-500 shadow-inner bg-black">
           <Scanner
             onScan={handleScan}
-            onError={(error) => console.error("Scanner error:", error?.message)}
+            onError={(error: Error | null) => console.error("Scanner error:", error?.message)}
             constraints={{ facingMode: "environment" }}
             allowMultiple={false}
             scanDelay={1000}

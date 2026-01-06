@@ -67,8 +67,20 @@ const CATEGORIES = [
   "Tráng Miệng",
 ];
 
-const generateMockData = (count = 100) => {
-  return Array.from({ length: count }, (_, i) => {
+interface MockMenuItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  rating: string;
+  sold: number;
+  isPromo: boolean;
+}
+
+const generateMockData = (count = 100): MockMenuItem[] => {
+  return Array.from({ length: count }, (_, i): MockMenuItem => {
     // Distribute categories somewhat evenly
     const categoryName = CATEGORIES[i % CATEGORIES.length];
 
@@ -97,20 +109,20 @@ const RestaurantMenu = () => {
   const navigate = useNavigate();
   const { cartItems, addToCart, updateQuantity, clearCart, placeOrder } =
     useCart();
-  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
-  const [showCartModal, setShowCartModal] = useState(false);
-  const [isOrdering, setIsOrdering] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0]);
+  const [showCartModal, setShowCartModal] = useState<boolean>(false);
+  const [isOrdering, setIsOrdering] = useState<boolean>(false);
+  const [orderSuccess, setOrderSuccess] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Modal State
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<MockMenuItem | null>(null);
 
-  const categoryRefs = useRef({});
+  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Derived state from Context
   const cart = useMemo(() => {
-    return cartItems.reduce((acc, item) => {
+    return cartItems.reduce<{ [key: string]: number }>((acc, item) => {
       acc[item.id] = item.quantity;
       return acc;
     }, {});
@@ -132,7 +144,7 @@ const RestaurantMenu = () => {
 
   // Group items by category for the display list
   const groupedItems = useMemo(() => {
-    const groups = {};
+    const groups: { [key: string]: MockMenuItem[] } = {};
     CATEGORIES.forEach((cat) => (groups[cat] = []));
     filteredItems.forEach((item) => {
       if (groups[item.category]) {
@@ -143,19 +155,26 @@ const RestaurantMenu = () => {
   }, [filteredItems]);
 
   // --- CART UTILS ---
-  const getItemQty = (id) => cart[id] || 0;
+  const getItemQty = (id: number): number => cart[id.toString()] || 0;
 
-  const handleUpdateCart = (item, delta, e) => {
-    if (e) e.stopPropagation(); // Prevent modal opening when clicking +/-
+  const handleUpdateCart = (item: MockMenuItem, delta: number, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation(); // Prevent modal opening when clicking +/- 
     const currentQty = getItemQty(item.id);
     if (currentQty === 0 && delta > 0) {
-      addToCart(item);
+      addToCart({
+        id: item.id.toString(),
+        title: item.name,
+        name: item.name,
+        price: item.price,
+        quantity: 1,
+        image: item.image,
+      });
     } else {
-      updateQuantity(item.id, delta);
+      updateQuantity(item.id.toString(), delta);
     }
   };
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item: MockMenuItem) => {
     setSelectedItem(item);
   };
 
@@ -176,7 +195,7 @@ const RestaurantMenu = () => {
     }, 2000);
   };
 
-  const scrollToCategory = (cat) => {
+  const scrollToCategory = (cat: string) => {
     setActiveCategory(cat);
     const el = categoryRefs.current[cat];
     if (el) {

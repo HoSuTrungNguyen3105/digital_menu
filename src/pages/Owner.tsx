@@ -6,19 +6,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { registerOwner } from "../api/auth.api";
 import Button from "../components/Button";
 
+interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export default function OwnerRegister() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   const {
     register,
     handleSubmit,
-    formState: { errors, submitCount },
-  } = useForm();
+    formState: { errors },
+  } = useForm<RegisterFormData>();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterFormData) => {
     setApiError("");
     setSuccess("");
     setLoading(true);
@@ -36,9 +42,10 @@ export default function OwnerRegister() {
 
       // Optional: redirect after few seconds
       setTimeout(() => navigate("/login"), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       setApiError(
-        err?.response?.data?.message ||
+        error?.response?.data?.message ||
           "Owner already exists or something went wrong"
       );
     } finally {
@@ -82,7 +89,7 @@ export default function OwnerRegister() {
                 placeholder="Anil Kumar"
               />
             </div>
-              <p className="text-xs text-red-500 mt-1">{(errors.name as any)?.message}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.name?.message}</p>
           </div>
 
           {/* Email */}

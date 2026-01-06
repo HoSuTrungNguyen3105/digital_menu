@@ -4,20 +4,26 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, UtensilsCrossed } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginOwner } from "../api/auth.api";
+import { LoginDto } from "../types";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 export default function OwnerLogin() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
-  const [verifyHint, setVerifyHint] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string>("");
+  const [verifyHint, setVerifyHint] = useState<boolean>(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<LoginFormData>();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormData) => {
     setApiError("");
     setVerifyHint(false);
     setLoading(true);
@@ -35,8 +41,8 @@ export default function OwnerLogin() {
 
       // only after successful login
       navigate("/dashboard");
-    } catch (err: any) {
-      const message = err?.response?.data?.message;
+    } catch (err: unknown) {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
 
       if (
         message?.toLowerCase().includes("verify") ||
@@ -85,7 +91,7 @@ export default function OwnerLogin() {
             </div>
             {errors.email && (
               <p className="text-xs text-red-500 mt-1">
-                {(errors.email as any)?.message}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -108,7 +114,7 @@ export default function OwnerLogin() {
             </div>
             {errors.password && (
               <p className="text-xs text-red-500 mt-1">
-                {(errors.password as any)?.message}
+                {errors.password.message}
               </p>
             )}
           </div>

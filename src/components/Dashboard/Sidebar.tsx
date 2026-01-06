@@ -9,18 +9,27 @@ import {
   ClipboardList,
   History,
   Settings,
+  LucideIcon,
 } from "lucide-react";
 
-export default function Sidebar({ onLogout }) {
+interface SidebarProps {
+  onLogout: () => void;
+}
+
+interface NavItem {
+  icon: LucideIcon;
+  label: string;
+  path: string;
+}
+
+export default function Sidebar({ onLogout }: SidebarProps) {
   const location = useLocation();
 
-  const isActive = (path) => {
-    return (
-      location.pathname === path || location.pathname.startsWith(path + "/")
-    );
-  };
+  const isActive = (path: string) =>
+    location.pathname === path ||
+    location.pathname.startsWith(path + "/");
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
     {
       icon: Store,
@@ -43,37 +52,35 @@ export default function Sidebar({ onLogout }) {
     {
       icon: UtensilsCrossed,
       label: "Create Restaurant",
-      path: "/create-restaurant",
+      path: "/dashboard/create-restaurant", // ✅ FIX
     },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r border-gray-200 transition-transform">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r">
       <div className="flex h-full flex-col px-3 py-4">
         {/* LOGO */}
-        <div className="mb-6 flex items-center pl-2.5">
-          <span className="self-center whitespace-nowrap text-xl font-semibold text-gray-800">
-            Menu<span className="text-orange-600">Digital</span>
-          </span>
+        <div className="mb-6 pl-2.5 text-xl font-semibold">
+          Menu<span className="text-orange-600">Digital</span>
         </div>
 
-        {/* NAV LINKS */}
-        <ul className="space-y-2 font-medium flex-1">
+        {/* NAV */}
+        <ul className="space-y-2 flex-1">
           {navItems.map((item) => (
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center rounded-lg p-3 group transition-colors ${
-                  isActive(item.path) && item.path !== "/create-restaurant" // Special case for create restaurant which might be outside or just a simple link
+                className={`flex items-center rounded-lg p-3 transition ${
+                  isActive(item.path)
                     ? "bg-orange-50 text-orange-600"
                     : "text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <item.icon
-                  className={`flex-shrink-0 h-5 w-5 transition duration-75 ${
+                  className={`h-5 w-5 ${
                     isActive(item.path)
                       ? "text-orange-600"
-                      : "text-gray-500 group-hover:text-gray-900"
+                      : "text-gray-500"
                   }`}
                 />
                 <span className="ml-3">{item.label}</span>
@@ -83,15 +90,13 @@ export default function Sidebar({ onLogout }) {
         </ul>
 
         {/* LOGOUT */}
-        <div className="mt-auto border-t pt-4">
-          <button
-            onClick={onLogout}
-            className="flex w-full items-center rounded-lg p-3 text-gray-900 hover:bg-red-50 hover:text-red-600 transition-colors group"
-          >
-            <LogOut className="flex-shrink-0 h-5 w-5 text-gray-500 transition duration-75 group-hover:text-red-600" />
-            <span className="ml-3 whitespace-nowrap">Logout</span>
-          </button>
-        </div>
+        <button
+          onClick={onLogout}
+          className="flex items-center rounded-lg p-3 text-gray-900 hover:bg-red-50 hover:text-red-600"
+        >
+          <LogOut className="h-5 w-5 mr-3" />
+          Logout
+        </button>
       </div>
     </aside>
   );

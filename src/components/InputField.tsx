@@ -1,9 +1,22 @@
 // src/components/common/Input.tsx
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, InputHTMLAttributes } from "react";
 import "./styles/Input.css";
 
-export const Input = forwardRef(
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
+  fullWidth?: boolean;
+  className?: string;
+  disabled?: boolean;
+  required?: boolean;
+  id?: string;
+}
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       label,

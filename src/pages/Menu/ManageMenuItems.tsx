@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  useGetMenuItems,
   useDeleteMenuItem,
+  useGetMenuItemsByMenu,
   useToggleMenuItem,
 } from "../../api/menuItem.hooks";
 
@@ -9,7 +9,7 @@ export default function ManageMenuItems() {
   const { menuId } = useParams();
   const navigate = useNavigate();
 
-  const { data: items = [], isLoading, error } = useGetMenuItems(menuId!);
+  const { data: items = [], isLoading, error } = useGetMenuItemsByMenu(menuId!);
   const deleteMutation = useDeleteMenuItem();
   const toggleMutation = useToggleMenuItem();
 

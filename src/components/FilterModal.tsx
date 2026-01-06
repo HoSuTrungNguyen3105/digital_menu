@@ -28,11 +28,6 @@ export interface FilterState {
   date_col: string;
   from_date: string;
   to_date: string;
-  is_active: string;
-  is_verified: string;
-  deleted_at: string;
-  is_paid: string;
-  insurance_enabled_default: string;
 }
 
 export interface StatusConfig {
@@ -59,11 +54,6 @@ const INTERNAL_DEFAULT_FILTER: FilterState = {
   date_col: "",
   from_date: "",
   to_date: "",
-  is_active: "",
-  is_verified: "",
-  deleted_at: "",
-  is_paid: "",
-  insurance_enabled_default: ""
 };
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -71,13 +61,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   onClose,
   onApply,
   allowedSort = [],
-  statusConfig = {
-    is_active: true,
-    is_verified: true,
-    deleted_at: true,
-    is_paid: true,
-    insurance_enabled_default: true
-  },
+  statusConfig = {},
   allowedDateCols = [],
   defaultFilter = {},
 }) => {

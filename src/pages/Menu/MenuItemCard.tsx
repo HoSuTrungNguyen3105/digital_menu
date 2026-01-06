@@ -1,7 +1,24 @@
 import { motion } from "framer-motion";
 import { Bike, Flame, ShoppingBag, Star } from "lucide-react";
 
-function MenuItemCard({ item }) {
+interface MenuItemCardProps {
+  item: {
+    _id?: string;
+    id?: string | number;
+    name: string;
+    description?: string;
+    price: number;
+    image?: string;
+    rating?: number | string;
+    reviews?: number;
+    minOrder?: string;
+    isFlashDeal?: boolean;
+    originalPrice?: number;
+    discount?: string | null;
+  };
+}
+
+function MenuItemCard({ item }: MenuItemCardProps) {
   return (
     <motion.div
       layout
@@ -12,8 +29,8 @@ function MenuItemCard({ item }) {
     >
       <div className="relative">
         <div className="aspect-[2/1] bg-gray-100 overflow-hidden">
-          <img
-            src={item.image}
+            <img
+            src={item.image || "https://via.placeholder.com/400"}
             alt={item.name}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
@@ -31,11 +48,15 @@ function MenuItemCard({ item }) {
           <ShoppingBag className="w-5 h-5" />
         </button>
 
-        <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-          <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-          <span className="text-xs font-bold">{item.rating}</span>
-          <span className="text-[10px] text-gray-300">({item.reviews})</span>
-        </div>
+        {item.rating && (
+          <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+            <span className="text-xs font-bold">{item.rating}</span>
+            {item.reviews && (
+              <span className="text-[10px] text-gray-300">({item.reviews})</span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="p-4">

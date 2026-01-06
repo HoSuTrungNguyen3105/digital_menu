@@ -8,19 +8,21 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 import MomoImg from "../../img/MOMO-Logo-App.png";
-import { useCart } from "../../context/CartContext";
+import { useCart, CartItem } from "../../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import QRCode from "react-qr-code";
 import Modal from "../../components/Modal";
 
+type PaymentMethod = "momo" | "vnpay";
+
 const Payment = () => {
   const navigate = useNavigate();
   const { cartItems, cartTotal, orders, clearCart, clearOrders } = useCart();
-  const [value, setValue] = useState("http://localhost:3000");
+  const [value, setValue] = useState<string>("http://localhost:3000");
 
   // Combine all items for display without mutation
   const allOrderedItems = useMemo(() => {
-    const itemMap = new Map();
+    const itemMap = new Map<string, CartItem>();
 
     // Add items from current cart
     cartItems.forEach((item) => {
@@ -31,7 +33,7 @@ const Payment = () => {
     orders.forEach((order) => {
       order.items.forEach((item) => {
         if (itemMap.has(item.id)) {
-          const existing = itemMap.get(item.id);
+          const existing = itemMap.get(item.id)!;
           existing.quantity += item.quantity;
         } else {
           itemMap.set(item.id, { ...item });
@@ -49,10 +51,10 @@ const Payment = () => {
   );
   const finalTotal = cartTotal + historyTotal;
 
-  const [paymentMethod, setPaymentMethod] = useState("momo");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isQRImage, setIsQRImage] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("momo");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [isQRImage, setIsQRImage] = useState<boolean>(false);
 
   const handlePayment = () => {
     if (finalTotal === 0) return;

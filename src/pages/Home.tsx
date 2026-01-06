@@ -256,7 +256,15 @@ export default function Home() {
 
 // --- SUB COMPONENTS ---
 
-function FeatureCard({ title, desc, icon, gradient, index }: any) {
+interface FeatureCardProps {
+  title: string;
+  desc: string;
+  icon: React.ReactNode;
+  gradient: string;
+  index: number;
+}
+
+function FeatureCard({ title, desc, icon, gradient, index }: FeatureCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

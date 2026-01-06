@@ -12,6 +12,26 @@ import {
 } from "lucide-react";
 import { getPublicMenu } from "../../api/public.api";
 import MenuItemCard from "./MenuItemCard";
+import { Menu, MenuItem } from "../../types";
+
+interface PublicMenuData {
+  restaurant: {
+    name: string;
+    address?: string;
+  };
+  menus: Menu[];
+  items: MenuItem[];
+}
+
+interface FilteredMenuItem extends MenuItem {
+  image: string;
+  rating: number;
+  reviews: number;
+  minOrder: string;
+  isFlashDeal: boolean;
+  originalPrice?: number;
+  discount?: string | null;
+}
 
 const FILTERS = [
   { id: "all", label: "Tất cả", icon: null },
@@ -25,19 +45,20 @@ const FILTERS = [
     label: "Dưới 50k",
     icon: <Tag className="w-4 h-4 text-green-500" />,
   },
-];
+] as const;
 
 export default function PublicMenu() {
-  const { tableId } = useParams();
-  const [data, setData] = useState(null);
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const { tableId } = useParams<{ tableId?: string }>();
+  const [data, setData] = useState<PublicMenuData | null>(null);
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
 
   useEffect(() => {
     async function fetchMenu() {
+      if (!tableId) return;
       try {
         const res = await getPublicMenu(tableId);
         const apiData = res.data.data;
@@ -62,7 +83,7 @@ export default function PublicMenu() {
   }, [tableId]);
 
   // --- FILTER LOGIC ---
-  const getFilteredItems = () => {
+  const getFilteredItems = (): FilteredMenuItem[] => {
     if (!data) return [];
     let result = data.items;
 
@@ -86,7 +107,7 @@ export default function PublicMenu() {
     }
 
     // Map to View Model (Add placeholders for missing UI data)
-    return result.map((item) => ({
+    return result.map((item): FilteredMenuItem => ({
       ...item,
       // Fallback UI data since backend might be simple
       image:
@@ -100,13 +121,6 @@ export default function PublicMenu() {
       discount: Math.random() > 0.8 ? "Giảm 20%" : null,
     }));
   };
-
-  const filterItemss = FILTERS.map((e) => {
-    {
-      label: e.label;
-      value: e.id;
-    }
-  });
 
   const filteredItems = getFilteredItems();
 
@@ -175,7 +189,7 @@ export default function PublicMenu() {
                   : "bg-gray-100 text-gray-700"
               }`}
             >
-              {menu.title}
+              {menu.name}
             </button>
           ))}
         </div>

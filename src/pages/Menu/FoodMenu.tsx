@@ -17,8 +17,23 @@ import { Link, useParams } from "react-router-dom";
 // import CountdownTimer from "./CountdownTimer";
 import MenuItemCard from "./MenuItemCard";
 
+interface MockMenuItem {
+  id: number;
+  name: string;
+  description: string;
+  originalPrice: number;
+  price: number;
+  discount: string;
+  image: string;
+  isFlashDeal: boolean;
+  tags: string[];
+  minOrder: string;
+  rating: number;
+  reviews: number;
+}
+
 // --- MOCK DATA ---
-const MOCK_ITEMS = [
+const MOCK_ITEMS: MockMenuItem[] = [
   {
     id: 1,
     name: "Sashimi Cá Hồi & Cá Trích",
@@ -101,20 +116,20 @@ const FILTERS = [
     label: "Phổ biến",
     icon: <Star className="w-4 h-4 text-yellow-500" />,
   },
-];
+] as const;
 
 export default function FoodMenu() {
-  const { tableId } = useParams(); // Simulate getting table ID from URL
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [items, setItems] = useState(MOCK_ITEMS);
+  const { tableId } = useParams<{ tableId?: string }>(); // Simulate getting table ID from URL
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [items, setItems] = useState<MockMenuItem[]>(MOCK_ITEMS);
   const targetTime = new Date(new Date().getTime() + 6 * 60 * 60 * 1000); // 6 hours from now
 
   // Filter Logic
   useEffect(() => {
-    let result = MOCK_ITEMS;
+    let result: MockMenuItem[] = MOCK_ITEMS;
 
-    if (activeFilter === "sales") {
+    if (activeFilter === "flash_deal") {
       result = result.filter((item) => item.isFlashDeal);
     } else if (activeFilter === "under_50k") {
       result = result.filter((item) => item.price < 50000);

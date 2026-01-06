@@ -1,22 +1,49 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Building2, MapPin, Phone, Mail, Globe, Clock, Users, UtensilsCrossed, Loader2 } from "lucide-react";
 import { createRestaurant } from "../api/restaurant.api";
+
+interface FormData {
+  name: string;
+  description: string;
+  address: string;
+  contactNumber: string;
+  email: string;
+  website: string;
+  cuisineType: string;
+  openingHours: string;
+  capacity: string;
+}
 
 export default function CreateRestaurant() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+    address: "",
+    contactNumber: "",
+    email: "",
+    website: "",
+    cuisineType: "",
+    openingHours: "",
+    capacity: "",
+  });
 
-  const handleSubmit = async (e) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!name || !address || !contactNumber) {
-      setError("All fields are required");
+    if (!formData.name || !formData.address || !formData.contactNumber) {
+      setError("Name, address, and contact number are required");
       return;
     }
 
@@ -24,98 +51,267 @@ export default function CreateRestaurant() {
       setLoading(true);
 
       await createRestaurant({
-        name: name.trim(),
-        address: address.trim(),
-        contactNumber: contactNumber.trim(),
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        location: formData.address.trim(),
       });
 
       navigate("/dashboard");
-    } catch (err) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       console.error(err);
-      setError(err?.response?.data?.message || "Failed to create restaurant");
+      setError(error?.response?.data?.message || "Failed to create restaurant");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-8 text-sm font-semibold text-gray-500 hover:text-orange-600 transition-colors"
-        >
-          ← Back
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors font-medium"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+        </div>
+      </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-3xl shadow-xl shadow-orange-500/5 border border-orange-100"
-        >
-          <div className="text-center mb-8">
-            <span className="text-4xl">🏪</span>
-            <h2 className="text-2xl font-bold mt-4 text-gray-900">
-              Create New Restaurant
-            </h2>
-            <p className="text-gray-500 text-sm">
-              Set up your location to start served
-            </p>
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl mb-6 shadow-lg shadow-orange-500/20">
+            <Building2 className="w-10 h-10 text-white" />
           </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+            Create Your Restaurant
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Set up your restaurant profile to start serving customers with our digital menu system
+          </p>
+        </div>
 
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* Error Message */}
           {error && (
-            <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl border border-red-100">
-              {error}
-            </p>
+            <div className="mx-6 mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+              <div className="flex items-center gap-2">
+                <span className="text-red-500 font-bold">!</span>
+                <p className="text-red-700 font-medium">{error}</p>
+              </div>
+            </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-semibold text-gray-700 ml-1">
-                Restaurant Name
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Tasty Bites"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
-              />
-            </div>
+          <div className="p-8 md:p-12">
+            {/* Basic Information Section */}
+            <section className="mb-12">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-red-600 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-gray-900">Basic Information</h2>
+              </div>
 
-            <div>
-              <label className="text-sm font-semibold text-gray-700 ml-1">
-                Address
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. 123 Main St, New York"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
-              />
-            </div>
+              <div className="space-y-6">
+                {/* Restaurant Name */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                    <Building2 className="w-4 h-4 text-orange-600" />
+                    Restaurant Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="e.g. Tasty Bites Restaurant"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                  />
+                </div>
 
-            <div>
-              <label className="text-sm font-semibold text-gray-700 ml-1">
-                Contact Number
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. +1 234 567 890"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                className="w-full mt-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
-              />
+                {/* Description */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                    <UtensilsCrossed className="w-4 h-4 text-orange-600" />
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    placeholder="Tell customers about your restaurant, specialties, and what makes you unique..."
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all resize-none bg-gray-50 hover:bg-white"
+                  />
+                </div>
+
+                {/* Cuisine Type & Capacity */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <UtensilsCrossed className="w-4 h-4 text-orange-600" />
+                      Cuisine Type
+                    </label>
+                    <select
+                      name="cuisineType"
+                      value={formData.cuisineType}
+                      onChange={handleChange}
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    >
+                      <option value="">Select cuisine type</option>
+                      <option value="Vietnamese">Vietnamese</option>
+                      <option value="Japanese">Japanese</option>
+                      <option value="Italian">Italian</option>
+                      <option value="Chinese">Chinese</option>
+                      <option value="Korean">Korean</option>
+                      <option value="Thai">Thai</option>
+                      <option value="American">American</option>
+                      <option value="Mexican">Mexican</option>
+                      <option value="Indian">Indian</option>
+                      <option value="French">French</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <Users className="w-4 h-4 text-orange-600" />
+                      Seating Capacity
+                    </label>
+                    <input
+                      type="number"
+                      name="capacity"
+                      placeholder="e.g. 50"
+                      value={formData.capacity}
+                      onChange={handleChange}
+                      min="1"
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Location & Contact Section */}
+            <section className="mb-12">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-red-600 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-gray-900">Location & Contact</h2>
+              </div>
+
+              <div className="space-y-6">
+                {/* Address */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                    <MapPin className="w-4 h-4 text-orange-600" />
+                    Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="e.g. 123 Main Street, District 1, Ho Chi Minh City"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                    className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                  />
+                </div>
+
+                {/* Contact Number & Email */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <Phone className="w-4 h-4 text-orange-600" />
+                      Contact Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="contactNumber"
+                      placeholder="e.g. +84 123 456 789"
+                      value={formData.contactNumber}
+                      onChange={handleChange}
+                      required
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <Mail className="w-4 h-4 text-orange-600" />
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="e.g. contact@restaurant.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Website & Opening Hours */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <Globe className="w-4 h-4 text-orange-600" />
+                      Website
+                    </label>
+                    <input
+                      type="url"
+                      name="website"
+                      placeholder="e.g. https://www.restaurant.com"
+                      value={formData.website}
+                      onChange={handleChange}
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+                      <Clock className="w-4 h-4 text-orange-600" />
+                      Opening Hours
+                    </label>
+                    <input
+                      type="text"
+                      name="openingHours"
+                      placeholder="e.g. 9:00 AM - 10:00 PM"
+                      value={formData.openingHours}
+                      onChange={handleChange}
+                      className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-all bg-gray-50 hover:bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Submit Button */}
+            <div className="pt-6 border-t border-gray-200">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl py-5 px-8 font-bold text-lg shadow-xl shadow-orange-500/25 hover:shadow-2xl hover:shadow-orange-500/30 hover:scale-[1.01] transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Creating Restaurant...</span>
+                  </>
+                ) : (
+                  <>
+                    <Building2 className="w-5 h-5" />
+                    <span>Create Restaurant</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full mt-8 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl py-3.5 font-bold shadow-lg shadow-orange-500/25 hover:scale-[1.02] transition-all disabled:opacity-70"
-          >
-            {loading ? "Creating..." : "Create Restaurant"}
-          </button>
         </form>
       </div>
     </div>
