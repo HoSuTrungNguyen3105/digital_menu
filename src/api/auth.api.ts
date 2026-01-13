@@ -2,19 +2,19 @@ import { AxiosResponse } from "axios";
 import instance from "../utils/axios";
 import { LoginDto, RegisterDto, AuthResponse, User, ApiResponse } from "../types";
 
-export const registerOwner = (
+export const registerStaff = (
     data: RegisterDto
 ): Promise<AxiosResponse<ApiResponse<AuthResponse>>> =>
-    instance.post("/users/register", data);
+    instance.post("/auth/register", data);
 
-export const loginOwner = (
+export const loginStaff = (
     data: LoginDto
 ): Promise<AxiosResponse<ApiResponse<AuthResponse>>> =>
-    instance.post("/users/login", data);
+    instance.post("/auth/login", data);
 
-export const logoutOwner = (): Promise<AxiosResponse<ApiResponse<void>>> =>
+export const logoutStaff = (): Promise<AxiosResponse<ApiResponse<void>>> =>
     instance.post("/users/logout");
 
-export const getMe = (): Promise<AxiosResponse<ApiResponse<User>>> => {
+export const getMyProfile = (): Promise<AxiosResponse<ApiResponse<User>>> => {
     return instance.get("/users/me");
 };

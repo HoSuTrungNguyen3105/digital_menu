@@ -1,25 +1,8 @@
 import { Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getMe } from "../api/auth.api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProtectedRoute({ children }: any) {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        await getMe(); // validates cookie + token
-        setIsAuthenticated(true);
-      } catch (err) {
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    checkAuth();
-  }, []);
+  const { isAuthenticated, loading } = useAuth();
 
   // ⏳ While checking auth
   if (loading) {
@@ -32,7 +15,7 @@ export default function ProtectedRoute({ children }: any) {
 
   // ❌ Not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/register" replace />;
   }
 
   // ✅ Authenticated

@@ -9,19 +9,18 @@ import {
   LogOut,
 } from "lucide-react";
 import Sidebar from "../components/Dashboard/Sidebar";
-import { logoutOwner } from "../api/auth.api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // For mobile toggle later if needed
 
   const handleLogout = async () => {
     try {
-      await logoutOwner();
+      await logout();
     } catch (error) {
       console.error("Logout failed", error);
-    } finally {
-      navigate("/login");
     }
   };
 
@@ -55,7 +54,7 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-black text-gray-900 leading-none group-hover:text-orange-600 transition-colors">
-                  Admin Panel
+                  {user?.name || "Admin Panel"}
                 </p>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
                   Restaurant Owner

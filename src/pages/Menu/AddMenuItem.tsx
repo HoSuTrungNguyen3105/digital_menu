@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createMenuItem } from "@/api/menuitem.api";
+// import { createMenuItem } from "@/api/menuitem.api";
 
 type CreateMenuItemPayload = {
   menuId: string;
@@ -108,9 +109,8 @@ export default function AddMenuItem() {
         <button
           type="submit"
           disabled={createMutation.isPending}
-          className={`w-full bg-black text-white px-4 py-2 rounded ${
-            createMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`w-full bg-black text-white px-4 py-2 rounded ${createMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
+            }`}
         >
           {createMutation.isPending ? "Adding..." : "Add Item"}
         </button>

@@ -8,9 +8,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
-import { getMe } from "../../api/auth.api";
-import { getRestaurants } from "../../api/restaurant.api";
-import RestaurantCard from "../../components/RestaurantCard";
 
 export default function DashboardOverview() {
   const navigate = useNavigate();
@@ -25,19 +22,19 @@ export default function DashboardOverview() {
       setLoading(true);
       setError("");
 
-      const [meRes, restRes] = await Promise.all([getMe(), getRestaurants()]);
+      // const [meRes, restRes] = await Promise.all([getMe(), getRestaurants()]);
 
-      setOwner(meRes?.data?.data || null);
+      // setOwner(meRes?.data?.data || null);
 
-      const list = restRes?.data?.data?.restaurant || [];
-      setRestaurants(Array.isArray(list) ? list.filter(Boolean) : []);
+      // const list = restRes?.data?.data?.restaurant || [];
+      // setRestaurants(Array.isArray(list) ? list.filter(Boolean) : []);
     } catch (err) {
       console.error("Dashboard error:", err);
-      if (err?.response?.status === 401) {
-        navigate("/login");
-      } else {
-        setError("Failed to load dashboard");
-      }
+      // if (err?.response?.status === 401) {
+      //   navigate("/login");
+      // } else {
+      //   setError("Failed to load dashboard");
+      // }
     } finally {
       setLoading(false);
     }
@@ -72,7 +69,7 @@ export default function DashboardOverview() {
       <header className="mb-10">
         <h1 className="text-3xl font-bold text-gray-900">
           Welcome back,{" "}
-          <span className="text-orange-600">{owner?.ownername}</span>
+          {/* <span className="text-orange-600">{owner?.ownername}</span> */}
         </h1>
         <p className="text-gray-500 mt-1">
           Here's what's happening with your restaurants today.
@@ -133,9 +130,8 @@ export default function DashboardOverview() {
                   {stat.value}
                 </h3>
                 <span
-                  className={`text-[10px] font-bold flex items-center mb-1 ${
-                    stat.positive ? "text-green-500" : "text-red-500"
-                  }`}
+                  className={`text-[10px] font-bold flex items-center mb-1 ${stat.positive ? "text-green-500" : "text-red-500"
+                    }`}
                 >
                   {stat.positive ? (
                     <ArrowUpRight className="w-3 h-3" />
@@ -187,8 +183,8 @@ export default function DashboardOverview() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {restaurants.map((r) => (
-              <RestaurantCard key={r._id} restaurant={r} />
+            {restaurants.map((r) => ([]
+              // <RestaurantCard key={r._id} restaurant={r} />
             ))}
           </div>
         </div>

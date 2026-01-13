@@ -28,6 +28,7 @@ export interface FilterState {
   date_col: string;
   from_date: string;
   to_date: string;
+  [key: string]: string | undefined;
 }
 
 export interface StatusConfig {
