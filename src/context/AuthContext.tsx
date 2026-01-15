@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, LoginDto, RegisterDto } from '@/types';
 import { getMyProfile, loginStaff, logoutStaff, registerStaff } from '@/api/auth.api';
+import instance from '@/utils/axios';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
     user: User | null;
+    token: string | null;  // Added token
     loading: boolean;
     login: (data: LoginDto) => Promise<void>;
     register: (data: RegisterDto) => Promise<void>;
@@ -17,6 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [token, setToken] = useState<string | null>(localStorage.getItem('accessToken')); // Added token state
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
 
@@ -24,39 +27,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const token = localStorage.getItem('accessToken');
             if (token) {
-                const { data } = await getMyProfile();
-                if (data.success) {
-                    setUser(data.data);
+                setToken(token);
+                // Optional: set default header as fallback
+                instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                const response = await getMyProfile();
+                const resData = response.data;
+                const isSuccess = resData.success || resData.status || resData.code === 200;
+
+                if (isSuccess && resData.data) {
+                    setUser(resData.data);
                     // Update local storage user just in case
-                    localStorage.setItem('user', JSON.stringify(data.data));
+                    localStorage.setItem('user', JSON.stringify(resData.data));
+                } else {
+                    setUser(null);
+                    setToken(null);
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('user');
                 }
             } else {
                 setUser(null);
+                setToken(null);
             }
         } catch (error) {
             console.error('Auth check failed:', error);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
             setUser(null);
+            setToken(null);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    // useEffect(() => {
+    //     checkAuth();
+    // }, []);
 
     const login = async (data: LoginDto) => {
         try {
             setLoading(true);
             const response = await loginStaff(data);
-            if (response.data.success && response.data.data) {
-                const { accessToken, user } = response.data.data;
+            const resData = response.data;
+
+            // Handle both structure: { success, data } and { status, data }
+            const isSuccess = resData.code === 200 || resData.status === true;
+
+            if (isSuccess && resData.data) {
+                const { accessToken, user } = resData.data;
+
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('user', JSON.stringify(user));
+
                 setUser(user);
-                alert('Logged in successfully');
+                setToken(accessToken);
+
+                alert(resData.msg || resData.message || 'Logged in successfully');
                 navigate('/');
             }
         } catch (error) {
@@ -91,13 +116,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
+            delete instance.defaults.headers.common['Authorization'];
             setUser(null);
+            setToken(null); // Clear token state
             navigate('/register');
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: !!user, checkAuth }}>
+        <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAuthenticated: !!user, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );

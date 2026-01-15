@@ -9,6 +9,7 @@ import {
   ClipboardList,
   History,
   Settings,
+  Shield,
   LucideIcon,
 } from "lucide-react";
 
@@ -48,6 +49,11 @@ export default function Sidebar({ onLogout }: SidebarProps) {
       label: "Order History",
       path: "/dashboard/manage/history",
     },
+    {
+      icon: Shield,
+      label: "Permissions",
+      path: "/dashboard/manage/permissions",
+    },
     { icon: Settings, label: "Settings", path: "/dashboard/settings" },
     {
       icon: UtensilsCrossed,
@@ -70,18 +76,16 @@ export default function Sidebar({ onLogout }: SidebarProps) {
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center rounded-lg p-3 transition ${
-                  isActive(item.path)
+                className={`flex items-center rounded-lg p-3 transition ${isActive(item.path)
                     ? "bg-orange-50 text-orange-600"
                     : "text-gray-900 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 <item.icon
-                  className={`h-5 w-5 ${
-                    isActive(item.path)
+                  className={`h-5 w-5 ${isActive(item.path)
                       ? "text-orange-600"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 />
                 <span className="ml-3">{item.label}</span>
               </Link>
