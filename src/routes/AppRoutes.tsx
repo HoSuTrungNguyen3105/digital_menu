@@ -20,6 +20,7 @@ import FoodManage from "../pages/Dashboard/Manage/FoodManage";
 import OrderManage from "../pages/Dashboard/Manage/OrderManage";
 import OrderHistory from "../pages/Dashboard/Manage/OrderHistory";
 import PermissionManage from "../pages/Dashboard/Manage/PermissionManage";
+import MasterDefinitions from "../pages/Dashboard/Manage/MasterDefinitions";
 import AccessControl from "../pages/Dashboard/Manage/AccessControl";
 import Settings from "../pages/Dashboard/Settings";
 import RestaurantRedirect from "./RestaurantRedirect";
@@ -34,6 +35,13 @@ import HomePage from "../pages/Home/index";
 import AuthForm from "@/components/Auth";
 
 // export default function App() {
+import {
+  MasterDefinitionsWithDirectMock,
+  MasterDefinitionsWithState,
+  MasterDefinitionsGrouped,
+  PermissionStatistics
+} from "../examples/MasterDefinitionsExample";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -82,6 +90,14 @@ export default function AppRoutes() {
             <Route path="manage/orders" element={<OrderManage />} />
             <Route path="manage/history" element={<OrderHistory />} />
             <Route path="manage/permissions" element={<PermissionManage />} />
+            <Route path="manage/master-definitions" element={<MasterDefinitions />} />
+
+            {/* Examples Routes */}
+            <Route path="manage/examples/direct" element={<MasterDefinitionsWithDirectMock />} />
+            <Route path="manage/examples/state" element={<MasterDefinitionsWithState />} />
+            <Route path="manage/examples/grouped" element={<MasterDefinitionsGrouped />} />
+            <Route path="manage/examples/statistics" element={<PermissionStatistics />} />
+
             <Route path="manage/access-control" element={<AccessControl />} />
 
             {/* SETTINGS */}

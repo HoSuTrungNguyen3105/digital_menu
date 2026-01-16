@@ -54,6 +54,11 @@ export default function Sidebar({ onLogout }: SidebarProps) {
       label: "Permissions",
       path: "/dashboard/manage/permissions",
     },
+    {
+      icon: Shield,
+      label: "Master Definitions",
+      path: "/dashboard/manage/master-definitions",
+    },
     { icon: Settings, label: "Settings", path: "/dashboard/settings" },
     {
       icon: UtensilsCrossed,
@@ -77,14 +82,14 @@ export default function Sidebar({ onLogout }: SidebarProps) {
               <Link
                 to={item.path}
                 className={`flex items-center rounded-lg p-3 transition ${isActive(item.path)
-                    ? "bg-orange-50 text-orange-600"
-                    : "text-gray-900 hover:bg-gray-100"
+                  ? "bg-orange-50 text-orange-600"
+                  : "text-gray-900 hover:bg-gray-100"
                   }`}
               >
                 <item.icon
                   className={`h-5 w-5 ${isActive(item.path)
-                      ? "text-orange-600"
-                      : "text-gray-500"
+                    ? "text-orange-600"
+                    : "text-gray-500"
                     }`}
                 />
                 <span className="ml-3">{item.label}</span>
