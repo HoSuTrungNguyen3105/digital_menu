@@ -20,6 +20,7 @@ import FoodManage from "../pages/Dashboard/Manage/FoodManage";
 import OrderManage from "../pages/Dashboard/Manage/OrderManage";
 import OrderHistory from "../pages/Dashboard/Manage/OrderHistory";
 import PermissionManage from "../pages/Dashboard/Manage/PermissionManage";
+import AccessControl from "../pages/Dashboard/Manage/AccessControl";
 import Settings from "../pages/Dashboard/Settings";
 import RestaurantRedirect from "./RestaurantRedirect";
 import CheckinTable from "../pages/CheckinTable";
@@ -81,6 +82,7 @@ export default function AppRoutes() {
             <Route path="manage/orders" element={<OrderManage />} />
             <Route path="manage/history" element={<OrderHistory />} />
             <Route path="manage/permissions" element={<PermissionManage />} />
+            <Route path="manage/access-control" element={<AccessControl />} />
 
             {/* SETTINGS */}
             <Route path="settings" element={<Settings />} />

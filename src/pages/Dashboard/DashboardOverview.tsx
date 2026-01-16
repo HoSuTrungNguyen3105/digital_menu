@@ -1,5 +1,19 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Chip,
+  Button,
+  Stack,
+  IconButton,
+  Paper,
+  Badge,
+} from "@mui/material";
 import {
   TrendingUp,
   Users,
@@ -7,7 +21,12 @@ import {
   Package,
   ArrowUpRight,
   ArrowDownRight,
+  ChevronRight,
+  TrendingDown,
+  Clock,
+  Calendar,
 } from "lucide-react";
+import theme from "../../theme/theme";
 
 export default function DashboardOverview() {
   const navigate = useNavigate();
@@ -64,7 +83,8 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <ThemeProvider theme={theme}>
+      <div className="max-w-7xl mx-auto">
       {/* HEADER - Simplified since Sidebar handles nav */}
       <header className="mb-10">
         <h1 className="text-3xl font-bold text-gray-900">
@@ -146,8 +166,272 @@ export default function DashboardOverview() {
         ))}
       </div>
 
-      {/* STATS or QUICK ACTIONS */}
-      {/* For now, just listing restaurants as before, but cleaner */}
+      {/* BEST SELLING DISHES */}
+      <Box sx={{ mb: 6 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: "text.primary" }}>
+            Best Selling Dishes
+          </Typography>
+          <Button
+            endIcon={<ChevronRight className="w-4 h-4" />}
+            sx={{ textTransform: "none", color: "text.secondary" }}
+          >
+            See All
+          </Button>
+        </Stack>
+
+        <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 2 }}>
+          {[
+            {
+              name: "Wagyu Gold Burger",
+              price: 450,
+              oldPrice: 520,
+              sales: "450 Sold",
+              image: "https://images.unsplash.com/photo-1740838535478-8f67b29f1c00?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHw0fHxHb3VybWV0JTIwYnVyZ2VyJTIwd2l0aCUyMGJlZWYlMjBwYXR0eSUyQyUyMGNoZWVzZSUyQyUyMGxldHR1Y2UlMkMlMjB0b21hdG8lMjBvbiUyMHdvb2RlbiUyMGJvYXJkJTIwYnVyZ2VyJTIwaGFtYnVyZ2VyJTIwZm9vZCUyMGdvdXJtZXR8ZW58MHwwfHx8MTc2ODU0NDYzNnww&ixlib=rb-4.1.0&q=85&w=400",
+              badge: "$5 off",
+              trending: true,
+              attribution: "Liana S on Unsplash",
+            },
+            {
+              name: "Black Truffle Pasta",
+              price: 382,
+              oldPrice: 420,
+              sales: "382 Sold",
+              image: "https://images.pexels.com/photos/2773940/pexels-photo-2773940.jpeg?auto=compress&cs=tinysrgb&w=400",
+              badge: "$2 off",
+              trending: true,
+              attribution: "Pixelme Stock Photography on Pexels",
+            },
+            {
+              name: "Spicy Miso Ramen",
+              price: 320,
+              oldPrice: 350,
+              sales: "320 Sold",
+              image: "https://images.pexels.com/photos/19205273/pexels-photo-19205273.jpeg?auto=compress&cs=tinysrgb&w=400",
+              badge: "$1.5 off",
+              trending: false,
+              attribution: "Nadin Sh on Pexels",
+            },
+          ].map((dish, index) => (
+            <Card
+              key={index}
+              sx={{
+                minWidth: 280,
+                maxWidth: 280,
+                borderRadius: 3,
+                boxShadow: 1,
+                transition: "all 0.3s",
+                "&:hover": {
+                  boxShadow: 4,
+                  transform: "translateY(-4px)",
+                },
+              }}
+            >
+              <Box sx={{ position: "relative" }}>
+                <CardMedia
+                  component="img"
+                  height="160"
+                  image={dish.image}
+                  alt={`${dish.name} - Photo by ${dish.attribution}`}
+                  sx={{ objectFit: "cover" }}
+                />
+                <Chip
+                  label={dish.badge}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    bgcolor: "error.main",
+                    color: "error.contrastText",
+                    fontWeight: 700,
+                    fontSize: "0.75rem",
+                  }}
+                />
+              </Box>
+              <CardContent sx={{ p: 2.5 }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontWeight: 700, mb: 0.5, color: "text.primary" }}
+                >
+                  {dish.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 1.5 }}>
+                  {dish.sales}
+                </Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      component="span"
+                      sx={{ fontWeight: 800, color: "text.primary" }}
+                    >
+                      ${dish.price}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      component="span"
+                      sx={{
+                        textDecoration: "line-through",
+                        color: "text.secondary",
+                        ml: 1,
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      ${dish.oldPrice}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    {dish.trending ? (
+                      <TrendingUp className="w-4 h-4" style={{ color: theme.palette.success.main }} />
+                    ) : (
+                      <TrendingDown className="w-4 h-4" style={{ color: theme.palette.error.main }} />
+                    )}
+                    <svg width="40" height="20" viewBox="0 0 40 20">
+                      <polyline
+                        points={dish.trending ? "0,15 10,10 20,12 30,5 40,8" : "0,5 10,8 20,12 30,10 40,15"}
+                        fill="none"
+                        stroke={dish.trending ? theme.palette.success.main : theme.palette.error.main}
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  </Box>
+                </Stack>
+              </CardContent>
+            </Card>
+          ))}
+        </Stack>
+      </Box>
+
+      {/* ACTION NEEDED & ACTIVE PROMOTIONS */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 3, mb: 6 }}>
+        {/* Action Needed */}
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: 1, borderColor: "divider" }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: "text.primary" }}>
+              ⚡ Action Needed
+            </Typography>
+          </Stack>
+          <Stack spacing={2}>
+            {[
+              {
+                task: "Kale & Quinoa Bowl",
+                status: "LOW COMMISSION",
+                time: "140 Views | 2 Orders (3.57%)",
+                date: null,
+              },
+              {
+                task: "Grilled Sea Bass",
+                status: "HIGH BOUNCE",
+                time: "80 Views | 2 Orders (2.8%)",
+                date: null,
+              },
+            ].map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  p: 2,
+                  bgcolor: "grey.50",
+                  borderRadius: 2,
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    bgcolor: "primary.50",
+                  },
+                }}
+              >
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
+                    {item.task}
+                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Chip
+                      label={item.status}
+                      size="small"
+                      sx={{
+                        bgcolor: "warning.main",
+                        color: "warning.contrastText",
+                        fontWeight: 700,
+                        fontSize: "0.65rem",
+                        height: 20,
+                      }}
+                    />
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                      {item.time}
+                    </Typography>
+                  </Stack>
+                </Box>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 700,
+                    bgcolor: "primary.main",
+                    px: 2.5,
+                    boxShadow: 2,
+                  }}
+                >
+                  Promote
+                </Button>
+              </Box>
+            ))}
+          </Stack>
+        </Paper>
+
+        {/* Active Promotions */}
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: 1, borderColor: "divider" }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: "text.primary" }}>
+              🔥 Active Promotions
+            </Typography>
+            <Button
+              endIcon={<ChevronRight className="w-4 h-4" />}
+              sx={{ textTransform: "none", color: "primary.main", fontWeight: 600 }}
+            >
+              Refer Out
+            </Button>
+          </Stack>
+          <Stack spacing={2.5}>
+            <Box
+              sx={{
+                p: 2.5,
+                bgcolor: "success.50",
+                borderRadius: 2,
+                border: 1,
+                borderColor: "success.200",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
+                <Typography variant="body1" sx={{ fontWeight: 700, color: "text.primary" }}>
+                  Happy Hour - 20% Off Drinks
+                </Typography>
+                <Chip
+                  label="ACTIVE"
+                  size="small"
+                  sx={{
+                    bgcolor: "success.main",
+                    color: "success.contrastText",
+                    fontWeight: 800,
+                    fontSize: "0.65rem",
+                    height: 22,
+                  }}
+                />
+              </Stack>
+              <Stack direction="row" spacing={2} sx={{ color: "text.secondary" }}>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Clock className="w-4 h-4" />
+                  <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    Ends in 06 days
+                  </Typography>
+                </Stack>
+              </Stack>
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
 
       {restaurants.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl text-center border border-gray-100 shadow-sm">
@@ -189,6 +473,7 @@ export default function DashboardOverview() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
